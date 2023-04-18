@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+   
+
+    <main>
+        <div class="mb-4">
+            <form method="post">
+                {% csrf_token %}
+            <h5 class="page-heading">Patient Registration</h5>
+        </div>
+        <div class="auto-scroll">
+            <div class="bg-white rounded-2 p-3 mb-4">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">UHID</label>
+                            <input type="text" name = "uhid" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group d-flex gap-3">
+                            <div class="w-50">
+                                <label class="form-label">Title</label>
+                                <select name = "title" class="form-select">
+                                    <option value="1" selected>Mr</option>
+                                    <option value="2">Miss</option>
+                                </select>
+                            </div>
+                            <div class="w-50">
+                                <label class="form-label">Gender</label>
+                                <select name = "gender" class="form-select" >
+                                    <option value="1" selected>Male</option>
+                                    <option value="2">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Patient Name</label>
+                            <input type="text" name="patient_name" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group d-flex gap-3">
+                            <div class="w-75">
+                                <label class="form-label">DOB</label>
+                                <input type="date" name="dob" class="form-control ">
+                            </div>
+                            <div class="w-25">
+                                <label class="form-label">Age</label>
+                                <input type="text" name="age" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Email ID</label>
+                            <input type="text" name="email_id" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Contact Number</label>
+                            <input type="text" name="contact_number" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label class="form-label">Patient History</label>
+                            <textarea class="form-control" name="patient_history" rows="1"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status">
+                                <option value="1" name="status" selected>Active</option>
+                                <option value="2" name="status">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group d-flex gap-3 justify-content-center">
+                    <button type="submit" class="theme-btn">Submit</button>
+                    <button type="Clear" class="theme-btn">Clear</button>
+                </form>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+</body>
+
+</html>
+
+{% endblock %}
