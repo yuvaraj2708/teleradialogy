@@ -87,3 +87,27 @@ def registrationsummary(request):
 @login_required
 def visitsummary(request):
     return render(request,'visit-summary.html')
+
+
+@login_required
+def register_device(request):
+    if request.method == 'POST':
+        device_id = request.POST.get('device_id')
+        client_name = request.POST.get('client_name')
+        address = request.POST.get('address')
+        pin_code = request.POST.get('pin_code')
+        mobile_number = request.POST.get('mobile_number')
+        email = request.POST.get('email')
+        
+        # Create and save the device
+        device = Device(
+            device_id=device_id,
+            client_name=client_name,
+            address=address,
+            pin_code=pin_code,
+            mobile_number=mobile_number,
+            email=email,
+        )
+        device.save()
+        
+    return render(request, 'registerdevice.html')

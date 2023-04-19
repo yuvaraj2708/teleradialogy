@@ -6,17 +6,17 @@ import uuid
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password, **extra_fields):
-        if not email:
-            raise ValueError('The Email field must be set')
+    def create_user(self, name, password, **extra_fields):
+        if not name:
+            raise ValueError('The Name field must be set')
 
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+        name = self.normalize_email(name)
+        user = self.model(name=name, **extra_fields)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, email, password, **extra_fields):
+    def create_superuser(self, name, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -25,20 +25,20 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(email, password, **extra_fields)
+        return self.create_user(name, password, **extra_fields)
 
 
 
 
 class CustomUser(AbstractBaseUser,PermissionsMixin):
-    email = models.EmailField(unique=True)
+    name = models.CharField(unique=True,max_length=30)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'name'
     REQUIRED_FIELDS = ['first_name', 'last_name']
     
     objects = CustomUserManager()
@@ -60,7 +60,7 @@ class Device(models.Model):
     pin_code = models.CharField(max_length=10)
     mobile_number = models.CharField(max_length=20)
     email = models.EmailField()
-    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    
 
     def __str__(self):
         return f"{self.device_id} ({self.client_name})"

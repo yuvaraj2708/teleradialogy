@@ -11,4 +11,5 @@ urlpatterns = [
     path('addvisit/',addvisit,name='addvisit'),
     path('',registrationsummary,name='registrationsummary'),
     path('visitsummary/',visitsummary,name='visitsummary'),
+    path('registerdevice/',register_device,name="register_device"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
