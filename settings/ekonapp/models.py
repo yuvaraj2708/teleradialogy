@@ -53,9 +53,22 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
 
 User = get_user_model()
 
+class Device(models.Model):
+    device_id = models.CharField(max_length=50)
+    client_name = models.CharField(max_length=100)
+    address = models.CharField(max_length=200)
+    pin_code = models.CharField(max_length=10)
+    mobile_number = models.CharField(max_length=20)
+    email = models.EmailField()
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.device_id} ({self.client_name})"
 
-class Patient(models.Model):
+    
+    
+    
+class ekon(models.Model):
     uhid = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     gender = models.CharField(max_length=255)
@@ -65,4 +78,13 @@ class Patient(models.Model):
     email_id = models.EmailField()
     contact_number = models.CharField(max_length=255)
     patient_history = models.TextField()
-    status = models.CharField(max_length=255)
+    date =  models.DateField(auto_now_add=True)
+    
+    Active = 'Active'
+    Inactive = 'Inactive'
+    STATUS_CHOICES = [
+        (Active, 'Active'),
+        (Inactive, 'Inactive'),
+    ]
+    status = models.CharField(max_length=255, choices=STATUS_CHOICES)
+    

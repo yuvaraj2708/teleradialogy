@@ -15,9 +15,9 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="form-label">UHID</label>
-                            <input type="text" name = "uhid" class="form-control">
-                        </div>
+                            <label class="form-label">UHID</label disabled>
+                            <input type="text" name = "uhid" value="{{ uhid }}" class="form-control" readonly>
+                        </div>  
                     </div>
                     <div class="col-md-4">
                         <div class="form-group d-flex gap-3">
@@ -51,7 +51,7 @@
                             </div>
                             <div class="w-25">
                                 <label class="form-label">Age</label>
-                                <input type="text" name="age" class="form-control">
+                                <input type="text" name="age" id="age" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -77,8 +77,8 @@
                         <div class="form-group">
                             <label class="form-label">Status</label>
                             <select class="form-select" name="status">
-                                <option value="1" name="status" selected>Active</option>
-                                <option value="2" name="status">Inactive</option>
+                                <option value="Active" name="status" selected>Active</option>
+                                <option value="Inactive" name="status">Inactive</option>
                             </select>
                         </div>
                     </div>
@@ -96,5 +96,24 @@
 </body>
 
 </html>
-
+<script>
+    // Get the date input field and age input field elements
+  const dobInput = document.querySelector('input[name="dob"]');
+  const ageInput = document.querySelector('input[name="age"]');
+  
+  // Add an event listener to the dob input field to calculate the age
+  dobInput.addEventListener('input', function() {
+    // Get the date of birth from the input field
+    const dob = new Date(dobInput.value);
+  
+    // Calculate the age based on the date of birth
+    const ageDiff = Date.now() - dob.getTime();
+    const ageDate = new Date(ageDiff);
+    const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+  
+    // Populate the age input field with the calculated age
+    ageInput.value = age;
+  });
+  
+  </script>
 {% endblock %}

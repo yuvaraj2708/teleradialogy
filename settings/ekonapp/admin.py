@@ -25,4 +25,4 @@ class CustomUserAdmin(UserAdmin):
 
 User = get_user_model()
 
-admin.site.register(Patient)
+admin.site.register(ekon)

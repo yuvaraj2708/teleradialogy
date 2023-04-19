@@ -1,45 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
-  <title>Telepathology</title>
-  <!-- Core theme CSS-->
-  <link href="assets/css/bootstrap.css" rel="stylesheet" />
-  <link href="assets/css/custom.css" rel="stylesheet" />
-</head>
-
-<body>
-  <header>
-    <div class="container-fluid px-4">
-      <div class="d-flex pt-1 align-items-center">
-        <div>
-          <img src="assets/images/app-logo.svg" class="app-logo">
-        </div>
-        <div class="ms-auto">
-          <ul class="nav menu-nav">
-            <li class="nav-item">
-              <a class="nav-link active" href="#">
-                <svg>
-                  <use xlink:href="assets/images/iocn.svg#person"></use>
-                </svg>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <svg>
-                  <use xlink:href="assets/images/iocn.svg#setting"></use>
-                </svg>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </header>
+{% extends 'base.html' %}
+{% block content %}
   <main>
     <div class="mb-4 d-flex gap-3 align-items-center pe-3">
         <h5 class="page-heading">Visit Summary</h5>
@@ -157,3 +117,4 @@
 </body>
 
 </html>
+{% endblock %}

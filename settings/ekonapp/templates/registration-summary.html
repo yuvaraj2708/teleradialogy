@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block content %}
+  <main>
+    <div class="mb-4 d-flex gap-3 align-items-center pe-3">
+        <h5 class="page-heading">Patient Master</h5>
+        <div class="ms-auto">
+          <div class="d-flex gap-3">
+            <button type="button" class="theme-btn-outline">
+              <svg>
+                  <use xlink:href="assets/images/iocn.svg#add"></use>
+              </svg>
+              <span>Add New Patient</span>
+          </button>
+            <button type="button" class="theme-btn-outline">
+              <svg>
+                  <use xlink:href="assets/images/iocn.svg#add"></use>
+              </svg>
+              <span>Add Visit</span>
+          </button>
+          </div>
+        </div>
+      </div>
+      <form method="POST" action="{% url 'registrationsummary' %}">
+        {% csrf_token %}
+    <div class="auto-scroll">
+          <div class="bg-white rounded-2 p-3 mb-4">
+              <div class="row">
+                <div class="col-md-3">
+                  <label class="form-label">From Date</label>
+                  <input type="date" class="form-control" id="from-date" name="from_date">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">To Date</label>
+                  <input type="date" class="form-control" id="to-date" name="to_date">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Patient Name</label>
+                  <input type="text" class="form-control" name="patient_name">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Status</label>
+                  <select class="form-select" name="status">
+                    <option value="Active" selected>Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <button type="search" class="theme-btn btn-h">
+                    <svg>
+                      <use xlink:href="static/images/iocn.svg#search"></use>
+                    </svg>
+                    <span>Search</span>
+                  </button>
+                </div>
+              </form>
+              </div>
+          </div>
+          <div class="bg-white rounded-2 p-3">
+              <div class="table-responsive">
+                  <table class="table table-data ">
+                      <thead>
+                        <tr>
+                          <th>Date / UHID</th>
+                          <th>Patient Details</th>
+                          <th>Email ID</th>
+                          <th>Contact Number</th>
+                          <th>Status</th>
+                          <th class="text-end">Actions</th>
+                        
+                      <tbody>
+                        <tr>
+                          {% for Patient in patients %}
+                          <td class="text-nowrap">
+                            <span>{{Patient.date}}</span><br><span>{{Patient.uhid }}</span>
+                          </td>
+                          <td>
+                            <div>
+                              <div class="text-d-blue fw-semibold">{{Patient.patient_name}}</div>
+                              <div>
+                                <span>{{Patient.age}}</span>
+                                <svg class="gender-male">
+                                  <use xlink:href="assets/images/iocn.svg#gender-male"></use>
+                              </svg>
+                              </div>
+                          </div>
+                          </td>
+                          <td>{{Patient.email_id}}</td>
+                          <td>{{Patient.contact_number}}</td>
+                          <td>
+                              <div class="sts-green">{{Patient.status}}</div>
+                          </td>
+                          <td class="text-end">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="table-btn">
+                                    <svg class="gender-icon">
+                                        <use xlink:href="static/images/iocn.svg#edit"></use>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                        </tr>
+                      </thead>
+                          {% endfor %}
+                          
+                        
+                        </tr>
+                      </tbody>  
+                    </table>
+              </div>
+          </div>
+    </div>
+
+  </main>
+</body>
+
+</html>
+{% endblock %}

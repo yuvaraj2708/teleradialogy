@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class HospitalappConfig(AppConfig):
+class EkonappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'hospitalapp'
+    name = 'ekonapp'

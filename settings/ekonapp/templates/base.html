@@ -23,24 +23,27 @@
                     <img src="{% static 'images/app-logo.svg' %}" class="app-logo">
                     <span class="badge badge-secondary">
                 </div>
+                
                 <div class="nav-item" style=" color: white;">
-                    <br> <a class="nav-link" href="#"> Dashboard <span class="badge badge-secondary"> </a>
-                <br></div>
+                    <br> <a class="nav-link" href="{% url 'registrationsummary' %}">Registration Summary<span class="badge badge-secondary">  </a>
+                    <br></div>
+
+
                 <div class="nav-item" style=" color: white;">
-                    <br><a class="nav-link" href="{% url "patient-registration" %}">Patient Registration <span class="badge badge-secondary"> </a>
+                    <br><a class="nav-link" href="{% url 'patient-registration' %}">Patient Registration <span class="badge badge-secondary"> </a>
                     <br></div><br>
                 <div class="nav-item" style=" color: white;">
                     <br><a class="nav-link" href="{% url 'addvisit' %}">Add Visit <span class="badge badge-secondary"> </a>
                     <br></div>
+               
                 <div class="nav-item" style=" color: white;">
-                    <br> <a class="nav-link" href="#">Registration Summary<span class="badge badge-secondary">  </a>
+                    <br><a class="nav-link" href="{% url 'visitsummary' %}">Visit Summary <span class="badge badge-secondary"> </a>
                     <br></div>
-                <div class="nav-item" style=" color: white;">
-                    <br><a class="nav-link" href="#">Visit Summary <span class="badge badge-secondary"> </a>
-                    <br></div>
+                   
                 <div class="nav-item" style=" color: white;">
                     <br> <a class="nav-link" href="{% url 'logout' %}">Logout<span class="badge badge-secondary"> </a>
                     <br></div>
+                    
                 <div class="ms-auto">
                     
                     <ul class="nav menu-nav">
