@@ -60,7 +60,7 @@ class Device(models.Model):
     pin_code = models.CharField(max_length=10)
     mobile_number = models.CharField(max_length=20)
     email = models.EmailField()
-    
+    is_registered = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.device_id} ({self.client_name})"
@@ -70,7 +70,19 @@ class Device(models.Model):
     
 class ekon(models.Model):
     uhid = models.CharField(max_length=255)
+    Mr = 'Mr'
+    Miss = 'Miss'
+    STATUS_CHOICES = [
+        (Mr, 'Mr'),
+        (Miss, 'Miss'),
+    ]
     title = models.CharField(max_length=255)
+    male = 'male'
+    female = 'female'
+    STATUS_CHOICES = [
+        (male, 'male'),
+        (female, 'female'),
+    ]
     gender = models.CharField(max_length=255)
     patient_name = models.CharField(max_length=255)
     dob = models.DateField()
@@ -88,3 +100,16 @@ class ekon(models.Model):
     ]
     status = models.CharField(max_length=255, choices=STATUS_CHOICES)
     
+    
+    
+class Test(models.Model):
+    date = models.DateField()
+    name = models.CharField(max_length=100, unique=True)
+    specimen_type = models.CharField(max_length=100)
+    department = models.CharField(max_length=100, choices=[('microbiology', 'Microbiology'), ('pathology', 'Pathology'), ('radiology', 'Radiology')])
+    report_format = models.CharField(max_length=100)
+    reporting_rate = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+

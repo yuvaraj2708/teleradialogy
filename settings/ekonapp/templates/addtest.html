@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+   
+
+    <main>
+        <div class="mb-4">
+            <form method="post" >
+
+                {% csrf_token %}
+            <h5 class="page-heading">Add Test</h5>
+        </div>
+        <div class="auto-scroll">
+            <div class="bg-white rounded-2 p-3 mb-4">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">date</label   >
+                            <input type="date" name = "date"  class="form-control" >
+                        </div>  
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group d-flex gap-3">
+                            <div class="w-50">
+                                <label class="form-label">name</label>
+                                <input type="text" name = "name"  class="form-control" >
+                       
+                            </div>
+                            <div class="w-50">
+                                <label class="form-label">specimen_type</label>
+                                <input type="text" name = "specimen_type"  class="form-control" >
+                       
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">department</label>
+                            <input type="text" name="department" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group d-flex gap-3">
+                            <div class="w-75">
+                                <label class="form-label">report_format</label>
+                                <input type="text" name="report_format" class="form-control ">
+                            </div>
+                            <div class="w-25">
+                                <label class="form-label">reporting_rate</label>
+                                <input type="text" name="reporting_rate"  class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                <div class="form-group d-flex gap-3 justify-content-center">
+                    <button type="submit" class="theme-btn">Save</button>
+                    <button type="Clear" class="theme-btn">Clear</button>
+                </form>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+</body>
+
+</html>
+
+{% endblock %}

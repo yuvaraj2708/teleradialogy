@@ -1,4 +1,5 @@
 import os
+from django.shortcuts import redirect
 
 def generate_uhid():
     # Check if the file with the last used ID exists
@@ -18,3 +19,14 @@ def generate_uhid():
         f.write(new_uhid)
     
     return new_uhid
+
+
+
+def require_purchase(func):
+    def wrapper(request, *args, **kwargs):
+        user = request.user
+        if user.is_authenticated and user.has_purchased_access:
+            return func(request, *args, **kwargs)
+        else:
+            return redirect('purchase')
+    return wrapper

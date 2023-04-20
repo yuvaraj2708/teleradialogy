@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block content %}
+  <main>
+   
+    <div class="mb-4">
+        <h5 class="page-heading">Tests Master</h5>
+      </div>
+    <div class="auto-scroll">
+          <div class="bg-white rounded-2 p-3 mb-4">
+              <div class="row">
+                <div class="col-md-3">
+                  <label class="form-label">Test Name / Code</label>
+                  <input type="text" class="form-control">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Department</label>
+                  <select class="form-select">
+                  </select>
+                </div>
+                <div class="col-md-4 d-flex">
+                  <button type="Search" class="theme-btn btn-h me-3">
+                    <svg>
+                      <use xlink:href="static/images/iocn.svg#search"></use>
+                    </svg>
+                    <span>Search</span>
+                  </button>
+                  <a href="{% url 'addtest' %}">
+                  <button type="submit" class="theme-btn btn-h">
+                    <svg>
+                      <use xlink:href="static/images/iocn.svg#search"></use>
+                    </svg>
+                    <span>Add Test</span>
+                  </button>
+                </a>
+                </div>
+              </div>
+          </div>
+          <form method="POST" action="{% url 'testmaster' %}">
+            {% csrf_token %}
+          <div class="bg-white rounded-2 p-3">
+              <div class="table-responsive">
+                  <table class="table table-data ">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Test Name </th>
+                          <th>Specimen Type</th>
+                          <th>Department</th>
+                          <th>Report Format</th>
+                          <th class="text-end">Reporting Rate</th>
+                          <th class="text-end">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          {% for testmaster in testmasters %}
+                          <td class="text-nowrap">{{testmaster.date}}</td>
+                          <td class="text-d-blue fw-semibold">{{testmaster.name}}</td>
+                          <td>{{testmaster.specimen_type}}</td>
+                          <td>{{testmaster.department}}</td>
+                          <td>{{testmaster.report_format}}</td>
+                          <td class="text-end">{{testmaster.reporting_rate}}</td>
+                          <td class="text-end">
+                              <div class="d-flex gap-2 justify-content-end">
+                                  <button type="button" class="table-btn">
+                                      <svg class="gender-icon">
+                                          <use xlink:href="assets/images/iocn.svg#view"></use>
+                                      </svg>
+                                  </button>
+                              </div>
+                          </td>
+                          
+                        </tr>
+                      </tbody>
+                      {% endfor %}
+                    </table>
+                    
+              </div>
+          </div>
+    </div>
+  </form>
+  </main>
+</body>
+
+</html>
+{% endblock %}

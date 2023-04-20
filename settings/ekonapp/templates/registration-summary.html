@@ -5,15 +5,15 @@
         <h5 class="page-heading">Patient Master</h5>
         <div class="ms-auto">
           <div class="d-flex gap-3">
-            <button type="button" class="theme-btn-outline">
+            <button type="submit" class="theme-btn-outline" >
               <svg>
-                  <use xlink:href="assets/images/iocn.svg#add"></use>
+                  <use xlink:href="static/images/iocn.svg#add"></use><a href ="{% url 'patient-registration' %}">
               </svg>
               <span>Add New Patient</span>
           </button>
-            <button type="button" class="theme-btn-outline">
+            <button type="submit" class="theme-btn-outline">
               <svg>
-                  <use xlink:href="assets/images/iocn.svg#add"></use>
+                  <use xlink:href="static/images/iocn.svg#add"></use>
               </svg>
               <span>Add Visit</span>
           </button>
@@ -92,9 +92,19 @@
                           <td class="text-end">
                             <div class="d-flex gap-2 justify-content-end">
                                 <button type="button" class="table-btn">
-                                    <svg class="gender-icon">
-                                        <use xlink:href="static/images/iocn.svg#edit"></use>
-                                    </svg>
+                                  <a href="{% url 'addvisit' Patient.id %}">
+                                      <svg class="gender-icon">
+                                          <use xlink:href="static/images/iocn.svg#edit"></use>
+                                      </svg>
+                                  </a>
+                                </button>
+                                  <button type="button" class="table-btn">
+                                    <a href="#" > 
+                                      <svg class="gender-icon">
+                                      <use xlink:href="static/images/delete-svgrepo-com.svg"></use>
+                                  </svg>
+                                      
+                                    </a>
                                 </button>
                             </div>
                         </td>
@@ -102,7 +112,7 @@
                       </thead>
                           {% endfor %}
                           
-                        
+                    </form>
                         </tr>
                       </tbody>  
                     </table>
@@ -115,3 +125,4 @@
 
 </html>
 {% endblock %}
+

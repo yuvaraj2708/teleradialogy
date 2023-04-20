@@ -28,3 +28,5 @@ User = get_user_model()
 admin.site.register(ekon)
 
 admin.site.register(Device)
+
+admin.site.register(Test)
