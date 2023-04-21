@@ -74,23 +74,31 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="form-label">Patient Category</label>
-                            <select class="form-select">
+                            <label class="form-label">Patient Category </label>
+                            <select class="form-select" name = "patient_category" >
+                                {% for patientcategory in patientscategory %}
+                            <option >{{ patientcategory.category }}</option>
+                              {% endfor %}
                             </select>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Ref Dr</label>
-                            <select class="form-select">
+                            <select class="form-select" name = "ref_dr">
+                                {% for refdr in refdrs %}
+                            <option >{{ refdr.doctor }}</option>
+                              {% endfor %}
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Select Test</label>
-                            <input type="text" class="form-control form-search">
-                        </div>
+                        <label class="form-label">Select Test</label>
+                        <select class="form-select" name = "selected_test">
+                            {% for selectedtest in select_test %}
+                        <option >{{ selectedtest.name }}</option>
+                       {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -104,16 +112,16 @@
                         </thead>
                         <tbody>
                           <tr>
-                            <td>0021</td>
-                            <td class="text-d-blue fw-semibold">PNS FULL STUDY</td>
+                    
                             <td class="text-end">
+                                
                                 <div class="d-flex gap-2 justify-content-end">
                                     <button type="button" class="table-btn">
                                         <svg class="gender-icon">
                                             <use xlink:href="static/images/bootstrap-icons.svg#x-lg"></use>
                                         </svg>
                                     </button>
-                                    
+                               
                                 </div>
                             </td>
                           </tr>

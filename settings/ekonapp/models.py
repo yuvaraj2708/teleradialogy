@@ -29,14 +29,14 @@ class CustomUserManager(BaseUserManager):
 
 
 
-
-class CustomUser(AbstractBaseUser,PermissionsMixin):
-    name = models.CharField(unique=True,max_length=30)
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    name = models.CharField(unique=True, max_length=30)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_device_registered = models.BooleanField(default=False)  # new field
     
     USERNAME_FIELD = 'name'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -44,11 +44,10 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.email
+        return self.name
   
     def has_module_perms(self, app_label):
         return True
-
 
 
 User = get_user_model()
@@ -60,11 +59,26 @@ class Device(models.Model):
     pin_code = models.CharField(max_length=10)
     mobile_number = models.CharField(max_length=20)
     email = models.EmailField()
-    is_registered = models.BooleanField(default=False)
+    is_registered = models.BooleanField(default=False)  # new field
 
     def __str__(self):
         return f"{self.device_id} ({self.client_name})"
 
+class Test(models.Model):
+    testid = models.CharField(max_length=255)
+    date =  models.DateField(auto_now_add=True)
+    name = models.CharField(max_length=100, unique=True)
+    specimen_type = models.CharField(max_length=100)
+    department = models.CharField(max_length=100, choices=[('microbiology', 'Microbiology'), ('pathology', 'Pathology'), ('radiology', 'Radiology')])
+    report_format = models.CharField(max_length=100)
+    reporting_rate = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+
+class RefDr(models.Model):
+    doctor = models.CharField(max_length=100)
     
     
     
@@ -99,17 +113,24 @@ class ekon(models.Model):
         (Inactive, 'Inactive'),
     ]
     status = models.CharField(max_length=255, choices=STATUS_CHOICES)
+  
     
-    
-    
-class Test(models.Model):
-    date = models.DateField()
-    name = models.CharField(max_length=100, unique=True)
-    specimen_type = models.CharField(max_length=100)
-    department = models.CharField(max_length=100, choices=[('microbiology', 'Microbiology'), ('pathology', 'Pathology'), ('radiology', 'Radiology')])
-    report_format = models.CharField(max_length=100)
-    reporting_rate = models.DecimalField(max_digits=5, decimal_places=2)
 
-    def __str__(self):
-        return self.name
+import uuid
 
+class Visit(models.Model):
+    patient = models.ForeignKey(ekon, on_delete=models.CASCADE)
+    patient_category = models.CharField(max_length=255)
+    ref_dr =  models.CharField(max_length=255)
+    selected_test = models.CharField(max_length=255)
+    visit_id = models.CharField(max_length=7, unique=True, editable=False)
+    date =  models.DateField(auto_now_add=True)
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.visit_id = 'V' + str(uuid.uuid4().int)[:5]
+        super(Visit, self).save(*args, **kwargs)
+
+    
+    
+class patientcategory(models.Model):
+    category = models.CharField(max_length = 255)

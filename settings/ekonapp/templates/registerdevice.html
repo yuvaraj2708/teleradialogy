@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block head %}
+    
+{% endblock %}
 {% block content %}
   <main>
     <form method="post">
@@ -13,37 +16,37 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="form-label">Device ID</label>
-              <input type="text" name= "device_id" class="form-control">
+              <input type="text" name= "device_id" class="form-control" required>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group">
               <label class="form-label">Client Name</label>
-              <input type="text" name = "client_name" class="form-control">
+              <input type="text" name = "client_name" class="form-control" required>
             </div>
           </div>
           <div class="col-md-12">
             <div class="form-group">
               <label class="form-label">Address</label>
-              <textarea class="form-control" name="address" rows="2"></textarea>
+              <textarea class="form-control" name="address" rows="2" required></textarea>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group">
               <label class="form-label">PIN Code</label>
-              <input type="text" name="pin_code" class="form-control">
+              <input type="text" name="pin_code" class="form-control" required>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group">
               <label class="form-label">Mobile No</label>
-              <input type="text" name= "mobile_number" class="form-control">
+              <input type="text" name= "mobile_number" class="form-control" required>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group">
               <label class="form-label">Email ID</label>
-              <input type="text" name="email" class="form-control">
+              <input type="email" name="email" class="form-control" required>
             </div>
           </div>
         </div>

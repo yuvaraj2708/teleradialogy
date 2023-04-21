@@ -23,7 +23,7 @@
                     <img src="{% static 'images/app-logo.svg' %}" class="app-logo">
                     <span class="badge badge-secondary">
                 </div>
-                
+                {% block head %}
                 <div class="nav-item" style=" color: white;">
                     <br> <a class="nav-link" href="{% url 'registrationsummary' %}">Registration Summary<span class="badge badge-secondary">  </a>
                     <br></div>
@@ -43,6 +43,7 @@
                     <br> <a class="nav-link" href="{% url 'logout' %}">Logout<span class="badge badge-secondary"> </a>
                     <br></div>
                     
+        {% endblock %}
                 <div class="ms-auto">
                     
                     <ul class="nav menu-nav">

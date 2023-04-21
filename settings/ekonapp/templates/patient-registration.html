@@ -24,15 +24,17 @@
                         <div class="form-group d-flex gap-3">
                             <div class="w-50">
                                 <label class="form-label">Title</label>
-                                <select name = "title" class="form-select">
-                                    <option value="Mr" selected>Mr</option>
+                                <select name = "title" class="form-select" required>
+                                    <option value="" selected>-</option>
+                                    <option value="Mr" >Mr</option>
                                     <option value="Miss">Miss</option>
                                 </select>
                             </div>
                             <div class="w-50">
                                 <label class="form-label">Gender</label>
-                                <select name = "gender" class="form-select" >
-                                    <option value="male" selected>Male</option>
+                                <select name = "gender" class="form-select" required >
+                                    <option value="" selected>-</option>
+                                    <option value="male" >Male</option>
                                     <option value="female">Female</option>
                                 </select>
                             </div>
@@ -41,43 +43,45 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Patient Name</label>
-                            <input type="text" name="patient_name" class="form-control">
+                            <input type="text" name="patient_name" class="form-control" required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group d-flex gap-3">
                             <div class="w-75">
                                 <label class="form-label">DOB</label>
-                                <input type="date" name="dob" class="form-control ">
+                                <input type="date" name="dob" class="form-control" required>
                             </div>
                             <div class="w-25">
                                 <label class="form-label">Age</label>
-                                <input type="text" name="age" id="age" class="form-control">
+                                <input type="text" name="age" id="age" class="form-control" required>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Email ID</label>
-                            <input type="text" name="email_id" class="form-control">
+                            <input type="email" name="email_id" class="form-control" required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Contact Number</label>
-                            <input type="text" name="contact_number" class="form-control">
+                            <input type="text" name="contact_number" class="form-control" id="contact_number" required>
+
                         </div>
                     </div>
                     <div class="col-md-8">
                         <div class="form-group">
                             <label class="form-label">Patient History</label>
-                            <textarea class="form-control" name="patient_history" rows="1"></textarea>
+                            <textarea class="form-control" name="patient_history" rows="1" required></textarea >
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Status</label>
-                            <select class="form-select" name="status">
+                            <select class="form-select" name="status" required>
+                                 
                                 <option value="Active" name="status" selected>Active</option>
                                 <option value="Inactive" name="status">Inactive</option>
                             </select>
@@ -86,6 +90,7 @@
                 </div>
                 <div class="form-group d-flex gap-3 justify-content-center">
                     <button type="submit" class="theme-btn">Save</button>
+                    
                     <button type="Clear" class="theme-btn">Clear</button>
                 </form>
                 </div>
@@ -115,6 +120,20 @@
     // Populate the age input field with the calculated age
     ageInput.value = age;
   });
-  
-  </script>
+  document.querySelector('#contact_number').addEventListener('input', function(event) {
+    // Remove any non-numeric characters from the input field
+    var phoneNumber = this.value.replace(/\D/g, '');
+    
+    // Check if the length of the phone number is exactly 10 digits
+    if (phoneNumber.length !== 10) {
+        // If the phone number is not exactly 10 digits, show an error message
+        this.setCustomValidity('Please enter a 10-digit phone number.');
+    } else {
+        // Otherwise, clear the error message
+        this.setCustomValidity('');
+    }
+});
+
+</script>
+
 {% endblock %}

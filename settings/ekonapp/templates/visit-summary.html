@@ -1,22 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
   <main>
+    <form method="POST" action="{% url 'visitsummary' %}">
+      {% csrf_token %}
     <div class="mb-4 d-flex gap-3 align-items-center pe-3">
         <h5 class="page-heading">Visit Summary</h5>
         <div class="ms-auto">
           <div class="d-flex gap-3">
+            <a href = "{% url 'patient-registration' %}">
             <button type="button" class="theme-btn-outline">
               <svg>
                   <use xlink:href="assets/images/iocn.svg#add"></use>
               </svg>
               <span>Add New Patient</span>
           </button>
-            <button type="button" class="theme-btn-outline">
-              <svg>
-                  <use xlink:href="assets/images/iocn.svg#add"></use>
-              </svg>
-              <span>Add Visit</span>
-          </button>
+        </a>
           </div>
         </div>
       </div>
@@ -24,12 +22,16 @@
           <div class="bg-white rounded-2 p-3 mb-4">
               <div class="row">
                 <div class="col-md-3">
-                  <label class="form-label">For The Date</label>
-                  <input type="text" class="form-control form-calendar">
+                  <label class="form-label">From Date</label>
+                  <input type="date"  name = "from_date" class="form-control ">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">To Date</label>
+                  <input type="date" name = "to_date" class="form-control ">
                 </div>
                 <div class="col-md-3">
                   <label class="form-label">Pt.Name / Visit ID / Pt.ID</label>
-                  <input type="text" class="form-control">
+                  <input type="text" name = "visit_id" class="form-control">
                 </div>
                 <div class="col-md-3">
                   <label class="form-label">Status</label>
@@ -42,7 +44,7 @@
                   </select>
                 </div>
                 <div class="col-md-3">
-                  <button type="button" class="theme-btn btn-h">
+                  <button type="search" class="theme-btn btn-h">
                       <svg>
                           <use xlink:href="assets/images/iocn.svg#search"></use>
                       </svg>
@@ -51,6 +53,7 @@
                 </div>
               </div>
           </div>
+        </form>
           <div class="bg-white rounded-2 p-3">
               <div class="table-responsive">
                   <table class="table table-data ">
@@ -63,12 +66,14 @@
                           <th class="text-end">Actions</th>
                         </tr>
                       </thead>
+                      {% for visits in visits %}
                       <tbody>
                         <tr>
-                          <td class="text-nowrap"><span>16 Nov 2022</span><br><span>000234</span></td>
+                         
+                          <td class="text-nowrap"><span>{{visits.date}}</span><br><span>{{visits.visit_id}}</span></td>
                           <td>
                             <div>
-                              <div class="text-d-blue fw-semibold">Kapil Nikhil Dev</div>
+                              <div class="text-d-blue fw-semibold">{{visits.patient.patient_name}}</div>
                               <div>
                                 <span>63</span>
                                 <svg class="gender-male">
@@ -77,10 +82,12 @@
                               </div>
                           </div>
                           </td>
-                          <td><span>Dr Sushil Baldwa</span><br><span>PNS FULL STUDY</span></td>
+                          <td><span>{{visits.ref_dr}}</span><br><span>{{visits.selected_test}}</span></td>
+                          
                           <td>
                               <div class="sts-blue">Completed</div>
                           </td>
+                          
                           <td class="text-end">
                               <div class="d-flex gap-3 justify-content-end">
                                   <button type="button" class="table-btn">
@@ -102,17 +109,20 @@
                                       <svg class="gender-icon">
                                           <use xlink:href="assets/images/iocn.svg#cloud-upload"></use>
                                       </svg>
-                                  </button>
+                                  </button> 
+                                   
                               </div>
                           </td>
+                        
                         </tr>
 
                       </tbody>
+                      {% endfor %}
                     </table>
               </div>
           </div>
     </div>
-
+   
   </main>
 </body>
 

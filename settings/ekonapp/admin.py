@@ -30,3 +30,9 @@ admin.site.register(ekon)
 admin.site.register(Device)
 
 admin.site.register(Test)
+
+admin.site.register(RefDr)
+
+admin.site.register(Visit)
+
+admin.site.register(patientcategory)

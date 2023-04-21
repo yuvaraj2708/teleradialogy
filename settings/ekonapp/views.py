@@ -4,9 +4,8 @@ from django.contrib.auth import get_user_model
 from .models import *
 import uuid
 from django.http import HttpResponse
-from .utils import generate_uhid
+from .utils import generate_uhid,generate_testuhid
 from django.db.models import Q
-from .utils import require_purchase
 from datetime import datetime
 from django.shortcuts import get_object_or_404
 from django.template import loader
@@ -41,21 +40,22 @@ def patientregistration(request):
         patient.save()
         # Generate a new uhid for the next patient registration
         request.session['uhid'] = generate_uhid()
-
+        
     return render(request, 'patient-registration.html', {'uhid': request.session['uhid']})
+
+
 
 
 
 @login_required
 def registrationsummary(request):
     patients = ekon.objects.all()
-    
     if request.method == 'POST':
-        date = request.POST.get('date')
         patient_name = request.POST.get('patient_name')
         status = request.POST.get('status')
-        from_date = request.GET.get('from_date')
-        to_date = request.GET.get('to_date')
+        from_date = request.POST.get('from_date')
+        to_date = request.POST.get('to_date')
+        contact_number = request.POST.get('contact_number')
         
         # Filter by patient name
         if patient_name:
@@ -69,8 +69,10 @@ def registrationsummary(request):
         if from_date and to_date:
             patients = patients.filter(date__range=[from_date, to_date])
         
+        if contact_number:
+            patients = patients.filter(contact_number__icontains=contact_number)
         
-        context = {'patients': patients}
+        context = {'patients': patients,}
         
     else:
         context = {
@@ -80,16 +82,12 @@ def registrationsummary(request):
     return render(request, 'registration-summary.html', context)
 
 
-@login_required
-def visitsummary(request):
-    
-    return render(request,'visit-summary.html')
-
-
 
 @login_required
 def register_device(request):
-    if request.session.get('registered'):
+    user = request.user
+    
+    if user.is_device_registered:
         # User has already registered, redirect to registration summary
         return redirect('registrationsummary')
     
@@ -115,20 +113,21 @@ def register_device(request):
         device = Device(device_id=device_id, client_name=client_name, address=address, pin_code=pin_code, mobile_number=mobile_number, email=email)
         device.save()
         
-        # Set session variable to indicate that user has registered
-        request.session['registered'] = True
+        # Update user's device registration status
+        user.is_device_registered = True
+        user.save()
         
         # Redirect to registration summary
         return redirect('registrationsummary')
     else:
         # Render registration form
         return render(request, 'registerdevice.html')
-
-
+    
+@login_required
 def addtest(request):
+    if 'testid' not in request.session:
+        request.session['testid'] = generate_testuhid()
     if request.method == 'POST':
-        today = datetime.today().strftime('%Y-%m-%d')
-        date = request.POST.get('date', today)
         name = request.POST.get('name')
         specimen_type = request.POST.get('specimen_type')
         department = request.POST.get('department')
@@ -136,12 +135,15 @@ def addtest(request):
         reporting_rate = request.POST.get('reporting_rate')
         
         
-        testmaster = Test(date=date, name=name, specimen_type=specimen_type, department=department, report_format=report_format, reporting_rate=reporting_rate)
+        testmaster = Test(testid=request.session['testid'], name=name, specimen_type=specimen_type, department=department, report_format=report_format, reporting_rate=reporting_rate)
         testmaster.save()
         
+        request.session['testid'] = generate_testuhid()
             
-    return render(request,'addtest.html')
-    
+    return render(request,'addtest.html', {'testid': request.session['testid']})
+
+
+@login_required
 def testmaster(request):
     testmasters = Test.objects.all()
     
@@ -188,8 +190,81 @@ def testmaster(request):
         
 #     return render(request, 'add-visit.html')
 
-
+@login_required
 def addvisit(request, id):
+    refdrs = RefDr.objects.all() 
     patient = ekon.objects.get(id=id)
-    context = {'patient': patient}
+    select_test = Test.objects.all()
+    patientscategory = patientcategory.objects.all()
+    if request.method == 'POST':
+        # Extract form data from request.POST dictionary
+        patient_category = request.POST.get('patient_category')
+        ref_dr = request.POST.get('ref_dr')
+        selected_test = request.POST.get('selected_test')
+        # Create a new Visit object
+        visit = Visit(patient=patient, patient_category=patient_category, ref_dr=ref_dr, selected_test=selected_test)
+        # Save the Visit object to the database
+        visit.save()
+        # Redirect to the page where you want to display both models
+        return redirect('visitsummary')
+    context = {'patient': patient,
+               'refdrs': refdrs,
+               'select_test':select_test,
+               'patientscategory':patientscategory,
+               }
     return render(request, 'add-visit.html', context)
+
+
+#    PatientCategory = models.CharField(max_length=255)
+#     Refdr = models.ForeignKey(RefDr,on_delete=models.CASCADE)
+#     Selecttest = models.ForeignKey(Test,on_delete=models.CASCADE)
+    
+    
+@login_required
+def visitsummary(request):
+    visits = Visit.objects.all()
+    if request.method == 'POST':
+        visit_id = request.POST.get('visit_id')
+        status = request.POST.get('status')
+        from_date = request.POST.get('from_date')
+        to_date = request.POST.get('to_date')
+        
+        # Filter by visit id
+        if visit_id:
+            visits = visits.filter(visit_id__icontains=visit_id)
+        
+        # Filter by status
+        if status:
+            visits = visits.filter(status=status)
+        
+        # Filter by date range
+        if from_date and to_date:
+            visits = visits.filter(date__range=[from_date, to_date])
+        
+        
+        context = {'visits': visits, 'from_date': from_date, 'to_date': to_date}
+        
+    else:
+        context = {'visits': visits}
+        
+    return render(request, 'visit-summary.html', context)
+
+
+
+
+def delete(request, id):
+    patient = ekon.objects.get(id=id)
+    patient.delete()
+    return redirect('registrationsummary')
+
+
+def scan(request):
+    return render(request,'scan.html')
+
+
+def scansummary(request):
+    return render(request,'scansummary.html')
+
+
+def telepathreport(request):
+    return render(request,'telepathreport.html')
