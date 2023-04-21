@@ -78,7 +78,15 @@ class Test(models.Model):
 
 
 class RefDr(models.Model):
-    doctor = models.CharField(max_length=100)
+    DoctorCode  = models.CharField(max_length=100)
+    Location  = models.CharField(max_length=100)
+    DoctorName = models.CharField(max_length=100)
+    Qualification= models.CharField(max_length=100)
+    Specialisation= models.CharField(max_length=100)
+    Address= models.CharField(max_length=100)
+    PINCode = models.CharField(max_length=100)
+    Mobile= models.CharField(max_length=100)
+    EmailID= models.CharField(max_length=100)
     
     
     

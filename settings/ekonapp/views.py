@@ -268,3 +268,19 @@ def scansummary(request):
 
 def telepathreport(request):
     return render(request,'telepathreport.html')
+
+def refdr(request):
+    if request.method == 'POST':
+       DoctorCode =  request.POST.get('DoctorCode')
+       Location =  request.POST.get('Location')
+       DoctorName=  request.POST.get('DoctorName')
+       Qualification=  request.POST.get('Qualification')
+       Specialisation=  request.POST.get('Specialisation')
+       Address=  request.POST.get('Address')
+       PINCode=  request.POST.get('PINCode')
+       Mobile=  request.POST.get('Mobile')
+       EmailID=  request.POST.get('EmailID')
+       refdr = RefDr(DoctorCode=DoctorCode ,Location =Location ,DoctorName= DoctorName ,Qualification =Qualification ,Specialisation =Specialisation,Address =Address ,PINCode= PINCode ,Mobile =Mobile ,EmailID=EmailID)
+       refdr.save()
+       
+    return render(request,'Refdr.html')

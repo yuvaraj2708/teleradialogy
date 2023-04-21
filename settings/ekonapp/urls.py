@@ -18,5 +18,6 @@ urlpatterns = [
     path('telepathreport/',telepathreport,name="telepathreport"),
     path('scan/',scan,name='scan'),
     path('scansummary/',scansummary,name='scansummary'),
+    path('refdr/',refdr,name='refdr'),
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
