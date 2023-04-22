@@ -2,21 +2,21 @@
 {% block content %}
   <main>
     <div class="mb-4 d-flex gap-3 align-items-center pe-3">
-        <h5 class="page-heading">Patient Master</h5>
+        <h5 class="page-heading">Ref Dr Master</h5>
         <div class="ms-auto">
           <div class="d-flex gap-3">
-            <a href = "{% url 'patient-registration' %}">
+            <a href = "{% url 'refdr' %}">
             <button type="submit" class="theme-btn-outline" >
               <svg>
-                  <use xlink:href="static/images/iocn.svg#add"></use><a href ="{% url 'patient-registration' %}">
+                  <use xlink:href="static/images/iocn.svg#add"></use>
               </svg>
-              <span>Add New Patient</span>
+              <span>Add Ref Dr</span>
           </button>
         </a>
       </div>
         </div>
       </div>
-      <form method="POST" action="{% url 'registrationsummary' %}">
+      <form method="POST" action="{% url 'refdrmaster' %}">
         {% csrf_token %}
     <div class="auto-scroll">
           <div class="bg-white rounded-2 p-3 mb-4">
@@ -30,20 +30,18 @@
                   <input type="date" class="form-control" id="to-date" name="to_date">
                 </div>
                 <div class="col-md-3">
-                  <label class="form-label">Patient Name</label>
-                  <input type="text" class="form-control" name="patient_name">
+                  <label class="form-label">Doctor Name</label>
+                  <input type="text" class="form-control" name="DoctorName">
                 </div>
                 <div class="col-md-3">
-                  <label class="form-label">Mobile</label>
-                  <input type="text" class="form-control" name="contact_number">
+                  <label class="form-label">Doctor Code</label>
+                  <input type="text" class="form-control" name="DoctorCode">
                 </div>
                 <div class="col-md-3">
-                  <label class="form-label">Status</label>
-                  <select class="form-select" name="status">
-                    <option value="Active" selected>Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
+                    <label class="form-label">Qualification</label>
+                    <input type="text" class="form-control" name="Qualification">
+                  </div>
+                
 
                 <div class="col-md-3">
                   <button type="search" class="theme-btn btn-h">
@@ -61,50 +59,57 @@
                   <table class="table table-data ">
                       <thead>
                         <tr>
-                          <th>Date / UHID</th>
-                          <th>Patient Details</th>
-                          <th>Email ID</th>
+                          <th>Doctor Code</th>
+                          <th> Doctor Name</th>
+                          <th>Qualification</th>
+                          <th>Specialisation</th>
+                          <th>Address</th>
+                          <th>PINCode</th>
                           <th>Mobile</th>
-                          <th>Status</th>
+                          <th>EmailID</th>
+                          
                           <th class="text-end">Actions</th>
                         
                       <tbody>
                         <tr>
-                          {% for Patient in patients %}
+                          {% for refdr in refdrmaster %}
                           <td class="text-nowrap">
-                            <span>{{Patient.date}}</span><br><span>{{Patient.uhid }}</span>
+                            <span>{{refdr.DoctorCode}}</span><br><span>{{refdr.date}}</span>
                           </td>
                           <td>
                             <div>
-                              <div class="text-d-blue fw-semibold">{{Patient.patient_name}}</div>
+                              <div class="text-d-blue fw-semibold">{{refdr.DoctorName }}</div>
                               <div>
-                                <span>{{Patient.age}}</span>
+                                
                                 <svg class="gender-male">
                                   <use xlink:href="assets/images/iocn.svg#gender-male"></use>
                               </svg>
                               </div>
                           </div>
                           </td>
-                          <td>{{Patient.email_id}}</td>
-                          <td>{{Patient.contact_number}}</td>
-                          <td>
-                              <div class="sts-green">{{Patient.status}}</div>
-                          </td>
+                          <td>{{refdr.Qualification}}</td>
+                          <td>{{refdr.Specialisation}}</td>
+                          <td>{{refdr.Address}}</td>
+                          <td>{{refdr.PINCode}}</td>
+                            <td>{{refdr.Mobile}}</td>
+                                <td>{{refdr.EmailID}}</td> 
+                          
+                          {% comment %} <td>
+                            <div class="sts-green">{{Patient.status}}</div>
+                        </td> {% endcomment %}
                           <td class="text-end">
                             <div class="d-flex gap-2 justify-content-end">
                                 
-                              <a href="{% url 'addvisit' Patient.id %}">
-                              <button type="button" class="table-btn" >
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20.9844 10H17M20.9844 10V6M20.9844 10L17.6569 6.34315C14.5327 3.21895 9.46734 3.21895 6.34315 6.34315C3.21895 9.46734 3.21895 14.5327 6.34315 17.6569C9.46734 20.781 14.5327 20.781 17.6569 17.6569C18.4407 16.873 19.0279 15.9669 19.4184 15M12 9V13L15 14.5" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-                                </button>
-                              </a>
+                                <a href="{% url 'edit_refdr' refdr.id %}">
                                   <button type="button" class="table-btn">
-                                    <a href="{% url 'delete' Patient.id %}" > 
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title></title> <g id="Complete"> <g id="edit"> <g> <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path> <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon> </g> </g> </g> </g></svg>
+                                  </button>
+                                </a>
+                                  <a href="{% url 'delete' refdr.id %}" >
+                                  <button type="button" class="table-btn">
                                       <<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-                              
-                                      
-                                    </a>
-                                </button>
+                                  </button>
+                                </a>
                             </div>
                         </td>
                         </tr>

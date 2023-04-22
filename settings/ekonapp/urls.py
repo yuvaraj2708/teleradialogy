@@ -18,6 +18,9 @@ urlpatterns = [
     path('telepathreport/',telepathreport,name="telepathreport"),
     path('scan/',scan,name='scan'),
     path('scansummary/',scansummary,name='scansummary'),
-    path('pathologist_mst/',refdr,name='refdr'),
-    
+    path('pathologist_mst/',addrefdr,name='refdr'),
+    path('refdrmaster/',refdrmaster,name='refdrmaster'),
+    path('edit_refdr/<int:id>/',edit_refdr,name="edit_refdr"),
+    path('edittest/<int:id>/',edittest,name='edittest'),
+    path('devices/<str:device_id>/register/', DeviceRegistrationView.as_view(), name='register'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

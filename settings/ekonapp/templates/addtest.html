@@ -25,12 +25,12 @@
                         <div class="form-group d-flex gap-3">
                             <div class="w-50">
                                 <label class="form-label">Test Name</label>
-                                <input type="text" name = "name"  class="form-control" >
+                                <input type="text" name = "name"  class="form-control" required>
                        
                             </div>
                             <div class="w-50">
                                 <label class="form-label">specimen_type</label>
-                                <input type="text" name = "specimen_type"  class="form-control" >
+                                <input type="text" name = "specimen_type"  class="form-control"required >
                        
                             </div>
                         </div>
@@ -38,24 +38,26 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">department</label>
-                            <input type="text" name="department" class="form-control">
+                            <input type="text" name="department" class="form-control" required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group d-flex gap-3">
                             <div class="w-75">
                                 <label class="form-label">report_format</label>
-                                <input type="text" name="report_format" class="form-control ">
+                                <input type="text" name="report_format" class="form-control " required>
                             </div>
                             <div class="w-25">
                                 <label class="form-label">reporting_rate</label>
-                                <input type="text" name="reporting_rate"  class="form-control">
+                                <input type="text" name="reporting_rate"  class="form-control" required>
                             </div>
                         </div>
                     </div>
                 <div class="form-group d-flex gap-3 justify-content-center">
+                    <button type="button" class="theme-btn" onclick="history.back()">Back</button>
                     <button type="submit" class="theme-btn">Save</button>
                     <button type="Clear" class="theme-btn">Clear</button>
+                    
                 </form>
                 </div>
             </div>

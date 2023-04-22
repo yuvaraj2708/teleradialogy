@@ -4,14 +4,16 @@ from django.contrib.auth import get_user_model
 from .models import *
 import uuid
 from django.http import HttpResponse
-from .utils import generate_uhid,generate_testuhid
+from .utils import generate_uhid,generate_testuhid,generate_Doctoruhid
 from django.db.models import Q
 from datetime import datetime
 from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.http import HttpResponseNotFound
 from django.contrib import messages
-
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.views.generic import TemplateView
 # Create your views here.
 User = get_user_model()
 
@@ -40,7 +42,7 @@ def patientregistration(request):
         patient.save()
         # Generate a new uhid for the next patient registration
         request.session['uhid'] = generate_uhid()
-        
+        return redirect('registrationsummary')
     return render(request, 'patient-registration.html', {'uhid': request.session['uhid']})
 
 
@@ -104,7 +106,7 @@ def register_device(request):
         try:
             device = Device.objects.get(device_id=device_id)
             if device.is_registered:
-                # device has already been registered, show error message
+                # Device has already been registered, show error message
                 return render(request, 'error.html', {'message': 'Device has already been registered.'})
         except Device.DoesNotExist:
             pass
@@ -117,12 +119,28 @@ def register_device(request):
         user.is_device_registered = True
         user.save()
         
+        # Set device authentication status to True
+        device.is_authenticated = True
+        device.save()
+        
         # Redirect to registration summary
         return redirect('registrationsummary')
     else:
+        # Check if device is already authenticated
+        device_id = request.GET.get('device_id')
+        if device_id:
+            try:
+                device = Device.objects.get(device_id=device_id)
+                if device.is_authenticated:
+                    # Device is already authenticated, redirect to desired page
+                    return redirect('desiredpage')
+            except Device.DoesNotExist:
+                pass
+        
         # Render registration form
         return render(request, 'registerdevice.html')
-    
+
+
 @login_required
 def addtest(request):
     if 'testid' not in request.session:
@@ -254,8 +272,22 @@ def visitsummary(request):
 
 def delete(request, id):
     patient = ekon.objects.get(id=id)
+    
     patient.delete()
     return redirect('registrationsummary')
+
+def delete(request, id):
+    patient = Visit.objects.get(id=id)
+    
+    patient.delete()
+    return redirect('visitsummary')
+
+def delete(request, id):
+    patient = RefDr.objects.get(id=id)
+    
+    patient.delete()
+    return redirect('refdrmaster')
+
 
 
 def scan(request):
@@ -269,10 +301,10 @@ def scansummary(request):
 def telepathreport(request):
     return render(request,'telepathreport.html')
 
-def refdr(request):
+def addrefdr(request):
+    if 'DoctorCode' not in request.session:
+        request.session['DoctorCode'] = generate_Doctoruhid()
     if request.method == 'POST':
-       DoctorCode =  request.POST.get('DoctorCode')
-       Location =  request.POST.get('Location')
        DoctorName=  request.POST.get('DoctorName')
        Qualification=  request.POST.get('Qualification')
        Specialisation=  request.POST.get('Specialisation')
@@ -280,7 +312,109 @@ def refdr(request):
        PINCode=  request.POST.get('PINCode')
        Mobile=  request.POST.get('Mobile')
        EmailID=  request.POST.get('EmailID')
-       refdr = RefDr(DoctorCode=DoctorCode ,Location =Location ,DoctorName= DoctorName ,Qualification =Qualification ,Specialisation =Specialisation,Address =Address ,PINCode= PINCode ,Mobile =Mobile ,EmailID=EmailID)
+       refdr = RefDr(DoctorCode=request.session['DoctorCode'] ,DoctorName= DoctorName ,Qualification =Qualification ,Specialisation =Specialisation,Address =Address ,PINCode= PINCode ,Mobile =Mobile ,EmailID=EmailID)
        refdr.save()
        
-    return render(request,'Refdr.html')
+       request.session['DoctorCode'] = generate_Doctoruhid()
+       return redirect('refdrmaster')
+       
+    return render(request,'Refdr.html',{'DoctorCode': request.session['DoctorCode']})
+
+
+def refdrmaster(request):
+    refdrmaster = RefDr.objects.all()
+    
+    
+    if request.method == 'POST':
+        DoctorCode = request.POST.get('DoctorCode')
+        DoctorName = request.POST.get('DoctorName')
+        Qualification = request.POST.get('Qualification')
+        from_date = request.POST.get('from_date')
+        to_date = request.POST.get('to_date')
+        
+        # Filter by visit id
+        if DoctorCode:
+            refdrmaster = refdrmaster.filter(DoctorCode__icontains=DoctorCode)
+        
+        # Filter by status
+        if DoctorName:
+            refdrmaster = refdrmaster.filter(DoctorName__icontains=DoctorName)
+            
+        if Qualification:
+            refdrmaster = refdrmaster.filter(Qualification__icontains=Qualification)
+        
+        # Filter by date range
+        if from_date and to_date:
+            refdrmaster = refdrmaster.filter(date__range=[from_date, to_date])
+        
+        
+        context = {'refdrmaster': refdrmaster, 'from_date': from_date, 'to_date': to_date}
+        
+    else:
+        
+      context = {
+        'refdrmaster':refdrmaster,
+      }
+    return render(request,'RefDrmaster.html',context)
+
+
+def edit_refdr(request, id):
+    refdr = RefDr.objects.get(id=id)
+    if request.method == 'POST':
+        # Save the updated data to the database
+        refdr.DoctorCode = request.POST.get('DoctorCode')
+        refdr.DoctorName = request.POST.get('DoctorName')
+        refdr.Qualification = request.POST.get('Qualification')
+        refdr.Specialisation = request.POST.get('Specialisation')
+        refdr.Address = request.POST.get('Address')
+        refdr.PINCode = request.POST.get('PINCode')
+        refdr.Mobile = request.POST.get('Mobile')
+        refdr.EmailID = request.POST.get('EmailID')
+        refdr.save()
+        return redirect('refdrmaster')
+    else:
+        # Render the edit form with the current data filled in
+        return render(request, 'edit_refdr.html', {'refdr': refdr})
+
+
+def edittest(request, id):
+    edittest = Test.objects.get(id=id)
+    if request.method == 'POST':
+           edittest.testid = request.POST.get('testid')
+           edittest.name = request.POST.get('name')
+           edittest.specimen_type = request.POST.get('specimen_type')
+           edittest.department = request.POST.get('department')
+           edittest.report_format = request.POST.get('report_format')
+           edittest.reporting_rate = request.POST.get('reporting_rate')
+           edittest.save()
+           return redirect('testmaster')
+    else:
+        # Render the edit form with the current data filled in
+     return render(request, 'edittest.html', {'edittest': edittest})
+
+
+class DeviceRegistrationView(TemplateView):
+    template_name = 'device_registration.html'
+
+    def get(self, request, *args, **kwargs):
+        device_id = kwargs.get('device_id')
+        try:
+            device = Device.objects.get(device_id=device_id)
+            if device.is_registered:
+                return HttpResponseRedirect(reverse('main'))
+            else:
+                return super().get(request, *args, **kwargs)
+
+        except Device.DoesNotExist:
+            return HttpResponseRedirect(reverse('device_login'))
+    
+    def post(self, request, *args, **kwargs):
+        device_id = kwargs.get('device_id')
+        try:
+            device = Device.objects.get(device_id=device_id)
+            device.is_registered = True
+            device.save()
+            return HttpResponseRedirect(reverse('main'))
+
+        except Device.DoesNotExist:
+            return HttpResponseRedirect(reverse('device_login'))

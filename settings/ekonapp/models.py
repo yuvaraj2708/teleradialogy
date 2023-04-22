@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
 from django.contrib.auth import get_user_model
 import uuid
+from django.db.models.signals import pre_delete
+
+
 # Create your models here.
 
 
@@ -59,11 +62,15 @@ class Device(models.Model):
     pin_code = models.CharField(max_length=10)
     mobile_number = models.CharField(max_length=20)
     email = models.EmailField()
+    is_authenticated = models.BooleanField(default=False)
     is_registered = models.BooleanField(default=False)  # new field
 
     def __str__(self):
         return f"{self.device_id} ({self.client_name})"
 
+    
+    
+    
 class Test(models.Model):
     testid = models.CharField(max_length=255)
     date =  models.DateField(auto_now_add=True)
@@ -79,7 +86,6 @@ class Test(models.Model):
 
 class RefDr(models.Model):
     DoctorCode  = models.CharField(max_length=100)
-    Location  = models.CharField(max_length=100)
     DoctorName = models.CharField(max_length=100)
     Qualification= models.CharField(max_length=100)
     Specialisation= models.CharField(max_length=100)
@@ -87,6 +93,7 @@ class RefDr(models.Model):
     PINCode = models.CharField(max_length=100)
     Mobile= models.CharField(max_length=100)
     EmailID= models.CharField(max_length=100)
+    date =  models.DateField(auto_now_add=True)
     
     
     

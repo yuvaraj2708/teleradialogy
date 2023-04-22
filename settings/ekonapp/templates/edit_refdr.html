@@ -14,28 +14,28 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="form-label">Doctor Code </label>
-              <input type="text" name= "DoctorCode" value= "{{DoctorCode}}" class="form-control"readonly>
+              <input type="text" name= "DoctorCode" value="{{ refdr.DoctorCode }}" class="form-control" readonly>
             </div>
           </div>
          
           <div class="col-md-3">
             <div class="form-group">
-              <label class="form-label">Doctor Name *</label>
-              <input type="text" class="form-control" name="DoctorName" value="{% if not form.instance.id %}Dr {% endif %}{{ form.instance.DoctorName }}" required >
+              <label class="form-label">Doctor Name</label>
+              <input type="text" class="form-control" name="DoctorName"   value="{{ refdr.DoctorName }}" required>
             </div>
           </div>
           
         
           <div class="col-md-3">
             <div class="form-group">
-              <label class="form-label">Qualification *</label>
-              <input type="text" name="Qualification" class="form-control" required>
+              <label class="form-label">Qualification</label>
+              <input type="text" name="Qualification" value="{{ refdr.Qualification }}" class="form-control" required>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
-              <label class="form-label">Specialisation *</label>
-              <select  name= "Specialisation" class="form-control" required>
+              <label class="form-label">Specialisation</label>
+              <select  name= "Specialisation" value="{{ refdr.Specialisation }}" class="form-control" required>
               <option>Pathology</option>
               <option>Microbiology</option>
               <option>Histo Pathology</option>
@@ -47,33 +47,33 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="form-label">Address</label>
-              <textarea type="text" name="Address" class="form-control" required></textarea>
+              <input type="text" name="Address" value="{{ refdr.Address }}" class="form-control">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
-              <label class="form-label">PIN Code </label>
-              <input type="text" name="PINCode" class="form-control" required>
+              <label class="form-label">PIN Code</label>
+              <input type="text" name="PINCode" value="{{ refdr.PINCode }}" class="form-control" required>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
-              <label class="form-label">Mobile *</label>
-              <input type="text" name="Mobile" class="form-control" required>
+              <label class="form-label">Mobile</label>
+              <input type="text" name="Mobile" value="{{ refdr.Mobile }}" class="form-control" required>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
-              <label class="form-label">Email ID </label>
-              <input type="email" name="EmailID" class="form-control" >
+              <label class="form-label">Email ID</label>
+              <input type="text" name="EmailID" value="{{ refdr.EmailID }}" class="form-control" required>
             </div>
           </div>
         </div>
         <div class="form-group d-flex gap-3 justify-content-center">
-          <button type="submit" class="theme-btn">Save</button>
-          
-          <button type="button" class="theme-btn" onclick="history.back()">Back</button>
-      </div>
+            <button type="submit" class="theme-btn">Save</button>
+            
+            <button type="button" class="theme-btn" onclick="history.back()">Back</button>
+        </div>
       </div>
     </div>
   </form>
@@ -101,5 +101,7 @@
       // Otherwise, update the input value to start with "Dr"
       doctorNameInput.value = `Dr ${currentValue}`;
     });
+
+    
   </script>
   

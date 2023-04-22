@@ -1,6 +1,6 @@
 import os
 from django.shortcuts import redirect
-from .models import Test,ekon
+from .models import Test,ekon,RefDr
 import re
 import uuid
 
@@ -61,3 +61,19 @@ def generate_visit_id():
     # Concatenate the numerical portion with the letter "V"
     visit_id = f'V{visit_num}'
     return visit_id
+
+
+def generate_Doctoruhid():
+    latest_doctor_code = RefDr.objects.filter(
+        DoctorCode__regex=r'^D\d{5}$'
+    ).order_by('-DoctorCode').first()
+
+    if latest_doctor_code:
+        latest_did = int(latest_doctor_code.DoctorCode.split('D')[-1])
+        new_did = f'D{latest_did+1:05d}'
+    else:
+        new_did = 'D00001'
+
+    return new_did
+
+

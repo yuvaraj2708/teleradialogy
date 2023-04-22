@@ -75,7 +75,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Patient Category </label>
-                            <select class="form-select" name = "patient_category" >
+                            <select class="form-select" name = "patient_category" required>
                                 {% for patientcategory in patientscategory %}
                             <option >{{ patientcategory.category }}</option>
                               {% endfor %}
@@ -87,14 +87,14 @@
                             <label class="form-label">Ref Dr</label>
                             <select class="form-select" name = "ref_dr">
                                 {% for refdr in refdrs %}
-                            <option >{{ refdr.doctor }}</option>
+                            <option >{{ refdr.DoctorName }}</option>
                               {% endfor %}
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Select Test</label>
-                        <select class="form-select" name = "selected_test">
+                        <select class="form-select" name = "selected_test" required>
                             {% for selectedtest in select_test %}
                         <option >{{ selectedtest.name }}</option>
                        {% endfor %}

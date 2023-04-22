@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <main>
+    <form method="post">
+      {% csrf_token %}
+
+    <div class="mb-4">
+      <h5 class="page-heading"> Add Test</h5>
+    </div>
+    <div class="auto-scroll">
+      <div class="bg-white rounded-2 p-3">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">testid</label>
+              <input type="text" name= "testid" value="{{ edittest.testid }}" class="form-control" readonly>
+            </div>
+          </div>
+         
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Test Name</label>
+              <input type="text" class="form-control" name="name"   value="{{ edittest.name }}" required>
+            </div>
+          </div>
+          
+        
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">specimen_type</label>
+              <input type="text" name="specimen_type" value="{{ edittest.specimen_type }}" class="form-control" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">department</label>
+              <select  name= "department" value="{{ edittest.department }}" class="form-control" required>
+              <option>Pathology</option>
+              <option>Microbiology</option>
+              <option>Histo Pathology</option>
+              <option>Heamatology</option>
+            </select>
+             
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">report_format</label>
+              <input type="text" name="report_format" value="{{ edittest.report_format }}" class="form-control">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">reporting_rate</label>
+              <input type="text" name="reporting_rate" value="{{ edittest.reporting_rate }}" class="form-control" required>
+            </div>
+          </div>
+          
+        <div class="form-group d-flex gap-3 justify-content-center">
+            <button type="submit" class="theme-btn">Save</button>
+            
+            <button type="button" class="theme-btn" onclick="history.back()">Back</button>
+        </div>
+      </div>
+    </div>
+  </form>
+  </main>
+</body>
+
+</html>
+{% endblock %}
