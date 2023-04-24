@@ -7,6 +7,12 @@
     <form method="post">
       {% csrf_token %}
 
+
+      {% if device_registered %}
+      <p>Device is registered. Please verify <a href="{% url 'registration_summary' %}">registration summary</a>.</p>
+  {% else %}
+      <p>Device is not registered.</p>
+  {% endif %}
     <div class="mb-4">
       <h5 class="page-heading">Register Device</h5>
     </div>

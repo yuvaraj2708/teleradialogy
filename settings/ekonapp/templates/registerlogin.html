@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block head %}
+    
+{% endblock %}
+{% block content %}
+
+{% if is_registered %}
+  <p>This device is registered</p>
+  <a href="{% url 'registrationsummary' %}">Go to Register Summary</a>
+{% else %}
+  <p>This device is not registered</p>
+  <a href="{% url 'registrationsummary' %}">Register Device</a>
+{% endif %}
+
+{% endblock %}

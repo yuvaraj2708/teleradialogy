@@ -14,6 +14,9 @@ from django.contrib import messages
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
+from django.contrib.auth.forms import AuthenticationForm
+from .forms import LoginForm
+from django.contrib.auth import login,authenticate
 # Create your views here.
 User = get_user_model()
 
@@ -85,60 +88,69 @@ def registrationsummary(request):
 
 
 
+
+@login_required
+def registerlogin(request):
+    if request.user.is_authenticated:
+        user = request.user
+        # Check if user has a registered device
+        if Device.objects.filter(user=user, is_registered=True).exists():
+            return redirect('registrationsummary')
+        else:
+            # Render registration form if device is not registered
+            return redirect('register_device')
+    # Redirect to device register if user is not authenticated
+    return redirect('register_device')
+
+
 @login_required
 def register_device(request):
-    user = request.user
-    
-    if user.is_device_registered:
-        # User has already registered, redirect to registration summary
-        return redirect('registrationsummary')
-    
     if request.method == 'POST':
-        # Handle form submission
-        device_id = request.POST['device_id']
-        client_name = request.POST['client_name']
-        address = request.POST['address']
-        pin_code = request.POST['pin_code']
-        mobile_number = request.POST['mobile_number']
-        email = request.POST['email']
+        device_id = request.POST.get('device_id')
+        client_name = request.POST.get('client_name')
+        address = request.POST.get('address')
+        pin_code = request.POST.get('pin_code')
+        mobile_number = request.POST.get('mobile_number')
+        email = request.POST.get('email')
         
-        # Check if device has already been registered
+        if not device_id or not client_name or not address or not pin_code or not mobile_number or not email:
+            # Render registration form with an error message
+            return render(request, 'registerdevice.html', {'error': 'Please fill in all the required fields.'})
+        
+        # Check if device is already registered
         try:
             device = Device.objects.get(device_id=device_id)
             if device.is_registered:
-                # Device has already been registered, show error message
-                return render(request, 'error.html', {'message': 'Device has already been registered.'})
+                # Device is already registered, render the registration form with an error message
+                return render(request, 'registerdevice.html', {'error': 'Device is already registered.'})
         except Device.DoesNotExist:
-            pass
-        
-        # Create a new device object
-        device = Device(device_id=device_id, client_name=client_name, address=address, pin_code=pin_code, mobile_number=mobile_number, email=email)
+            # Device is not registered, create a new Device object
+            device = Device(device_id=device_id)
+
+        # Set the other fields and save the device object
+        device.client_name = client_name
+        device.address = address
+        device.pin_code = pin_code
+        device.mobile_number = mobile_number
+        device.email = email
+        device.is_registered = True
+        device.user = request.user
         device.save()
-        
-        # Update user's device registration status
+
+        # Set the is_device_registered flag on the user object
+        user = request.user
         user.is_device_registered = True
         user.save()
-        
-        # Set device authentication status to True
-        device.is_authenticated = True
-        device.save()
-        
-        # Redirect to registration summary
+
+        # Redirect to the registration summary page
         return redirect('registrationsummary')
-    else:
-        # Check if device is already authenticated
-        device_id = request.GET.get('device_id')
-        if device_id:
-            try:
-                device = Device.objects.get(device_id=device_id)
-                if device.is_authenticated:
-                    # Device is already authenticated, redirect to desired page
-                    return redirect('desiredpage')
-            except Device.DoesNotExist:
-                pass
-        
-        # Render registration form
-        return render(request, 'registerdevice.html')
+
+    # Render the registration form if the request method is GET
+    return render(request, 'registerdevice.html')
+
+
+
+
 
 
 @login_required
@@ -270,13 +282,13 @@ def visitsummary(request):
 
 
 
-def delete(request, id):
+def deleteregistersummary(request, id):
     patient = ekon.objects.get(id=id)
     
     patient.delete()
     return redirect('registrationsummary')
 
-def delete(request, id):
+def deletevisit(request, id):
     patient = Visit.objects.get(id=id)
     
     patient.delete()
@@ -288,10 +300,18 @@ def delete(request, id):
     patient.delete()
     return redirect('refdrmaster')
 
+def deletetest(request ,id):
+    patient = Test.objects.get(id=id)
+    patient.delete()
+    
+    return redirect('testmaster')
 
-
-def scan(request):
-    return render(request,'scan.html')
+def scan(request,id):
+    scans = Visit.objects.get(id=id)
+    context = {
+        'scans':scans,
+    }
+    return render(request,'scan.html',context)
 
 
 def scansummary(request):

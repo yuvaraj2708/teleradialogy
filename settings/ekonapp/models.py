@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 import uuid
 from django.db.models.signals import pre_delete
 
-
 # Create your models here.
 
 
@@ -56,19 +55,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 User = get_user_model()
 
 class Device(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     device_id = models.CharField(max_length=50)
     client_name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     pin_code = models.CharField(max_length=10)
     mobile_number = models.CharField(max_length=20)
     email = models.EmailField()
-    is_authenticated = models.BooleanField(default=False)
-    is_registered = models.BooleanField(default=False)  # new field
+    is_registered = models.BooleanField(default=True)
 
-    def __str__(self):
-        return f"{self.device_id} ({self.client_name})"
 
-    
     
     
 class Test(models.Model):
