@@ -313,14 +313,15 @@ def scan(request,id):
     }
     return render(request,'scan.html',context)
 
-
+@login_required
 def scansummary(request):
     return render(request,'scansummary.html')
 
-
+@login_required
 def telepathreport(request):
     return render(request,'telepathreport.html')
 
+@login_required
 def addrefdr(request):
     if 'DoctorCode' not in request.session:
         request.session['DoctorCode'] = generate_Doctoruhid()
@@ -340,7 +341,7 @@ def addrefdr(request):
        
     return render(request,'Refdr.html',{'DoctorCode': request.session['DoctorCode']})
 
-
+@login_required
 def refdrmaster(request):
     refdrmaster = RefDr.objects.all()
     
@@ -377,7 +378,7 @@ def refdrmaster(request):
       }
     return render(request,'RefDrmaster.html',context)
 
-
+@login_required
 def edit_refdr(request, id):
     refdr = RefDr.objects.get(id=id)
     if request.method == 'POST':
@@ -396,7 +397,7 @@ def edit_refdr(request, id):
         # Render the edit form with the current data filled in
         return render(request, 'edit_refdr.html', {'refdr': refdr})
 
-
+@login_required
 def edittest(request, id):
     edittest = Test.objects.get(id=id)
     if request.method == 'POST':
@@ -413,28 +414,3 @@ def edittest(request, id):
      return render(request, 'edittest.html', {'edittest': edittest})
 
 
-class DeviceRegistrationView(TemplateView):
-    template_name = 'device_registration.html'
-
-    def get(self, request, *args, **kwargs):
-        device_id = kwargs.get('device_id')
-        try:
-            device = Device.objects.get(device_id=device_id)
-            if device.is_registered:
-                return HttpResponseRedirect(reverse('main'))
-            else:
-                return super().get(request, *args, **kwargs)
-
-        except Device.DoesNotExist:
-            return HttpResponseRedirect(reverse('device_login'))
-    
-    def post(self, request, *args, **kwargs):
-        device_id = kwargs.get('device_id')
-        try:
-            device = Device.objects.get(device_id=device_id)
-            device.is_registered = True
-            device.save()
-            return HttpResponseRedirect(reverse('main'))
-
-        except Device.DoesNotExist:
-            return HttpResponseRedirect(reverse('device_login'))
