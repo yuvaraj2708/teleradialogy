@@ -3,7 +3,11 @@ from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,Permissi
 from django.contrib.auth import get_user_model
 import uuid
 from django.db.models.signals import pre_delete
-
+import os
+from django.conf import settings
+import pydicom
+from PIL import Image
+import numpy as np
 # Create your models here.
 
 
@@ -111,7 +115,7 @@ class ekon(models.Model):
     gender = models.CharField(max_length=255)
     patient_name = models.CharField(max_length=255)
     dob = models.DateField()
-    age = models.IntegerField()
+    age = models.CharField(max_length=255)
     email_id = models.EmailField()
     contact_number = models.CharField(max_length=255)
     patient_history = models.TextField()
@@ -145,3 +149,38 @@ class Visit(models.Model):
     
 class patientcategory(models.Model):
     category = models.CharField(max_length = 255)
+    
+    
+class Scansummary(models.Model):
+    scandetails = models.ForeignKey(Visit, on_delete=models.CASCADE)
+    jpgfile = models.ImageField(upload_to='scans/')
+
+    def save(self, *args, **kwargs):
+        # Rename the uploaded file to match the visit ID
+        visit_id = self.scandetails.visit_id
+        extension = os.path.splitext(self.jpgfile.name)[1]
+        self.jpgfile.name = f"{visit_id}{extension}"
+
+        # Create a new DICOM file and attach patient information
+        ds = pydicom.Dataset()
+        ds.PatientName = self.scandetails.patient.patient_name
+        ds.PatientAge = self.scandetails.patient.age
+        # Add other relevant patient information to the dataset
+        
+        # Load the scanned JPEG image
+        jpg_path = os.path.join(settings.MEDIA_ROOT, self.jpgfile.name)
+        with open(jpg_path, 'rb') as f:
+            jpg_bytes = f.read()
+
+        # Attach the JPEG image to the DICOM file
+        ds.PixelData = jpg_bytes
+        ds.file_meta = pydicom.Dataset()
+        ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
+        ds.is_little_endian = True
+        ds.is_implicit_VR = True
+
+        # Save the DICOM file to disk
+        dicom_path = os.path.splitext(jpg_path)[0] + '.dcm'
+        ds.save_as(dicom_path)
+
+        super(Scansummary, self).save(*args, **kwargs)

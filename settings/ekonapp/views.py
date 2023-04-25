@@ -17,10 +17,17 @@ from django.views.generic import TemplateView
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import LoginForm
 from django.contrib.auth import login,authenticate
+from .decorators import device_required
+import os
+import pydicom
+from PIL import Image
+import numpy as np
+
 # Create your views here.
 User = get_user_model()
 
 @login_required
+@device_required
 def patientregistration(request):
     if 'uhid' not in request.session:
         request.session['uhid'] = generate_uhid()
@@ -53,6 +60,7 @@ def patientregistration(request):
 
 
 @login_required
+@device_required
 def registrationsummary(request):
     patients = ekon.objects.all()
     if request.method == 'POST':
@@ -87,20 +95,21 @@ def registrationsummary(request):
     return render(request, 'registration-summary.html', context)
 
 
-
-
 @login_required
 def registerlogin(request):
     if request.user.is_authenticated:
         user = request.user
         # Check if user has a registered device
         if Device.objects.filter(user=user, is_registered=True).exists():
-            return redirect('registrationsummary')
+            # User has a registered device, show the registration summary page
+            return render(request, 'registration-summary.html')
         else:
-            # Render registration form if device is not registered
+            # User doesn't have a registered device, redirect to the device registration page
             return redirect('register_device')
     # Redirect to device register if user is not authenticated
     return redirect('register_device')
+
+
 
 
 @login_required
@@ -154,6 +163,7 @@ def register_device(request):
 
 
 @login_required
+@device_required
 def addtest(request):
     if 'testid' not in request.session:
         request.session['testid'] = generate_testuhid()
@@ -174,6 +184,7 @@ def addtest(request):
 
 
 @login_required
+@device_required
 def testmaster(request):
     testmasters = Test.objects.all()
     
@@ -182,45 +193,8 @@ def testmaster(request):
     }
     return render(request,'tests-master.html',context)
 
-
-# def addvisit(request, id):
-#     patient = ekon.objects.get(id=id)
-
-#     if request.method == 'POST':
-#         uhid  = request.POST.get('uhid')
-#         title = request.POST.get('title')
-#         gender = request.POST.get('gender')
-#         patient_name = request.POST.get('patient_name')
-#         dob = request.POST.get('dob')
-#         age = request.POST.get('age')
-#         email_id = request.POST.get('email_id')
-#         contact_number = request.POST.get('contact_number')
-#         patient_history = request.POST.get('patient_history')
-#         status = request.POST.get('status')
-#         date = request.POST.get('date')
-
-#         # Update the patient object with form data
-#         patient.uhid=uhid
-#         patient.title=title
-#         patient.gender=gender
-#         patient.patient_name=patient_name
-#         patient.dob=dob
-#         patient.age=age
-#         patient.email_id=email_id
-#         patient.contact_number=contact_number
-#         patient.patient_history=patient_history
-#         patient.status=status
-#         patient.date=date
-#         patient.save()
-        
-        
-#         messages.error(request, 'A test with that name already exists.')
-#         return redirect('registrationsummary')
-         
-        
-#     return render(request, 'add-visit.html')
-
 @login_required
+@device_required
 def addvisit(request, id):
     refdrs = RefDr.objects.all() 
     patient = ekon.objects.get(id=id)
@@ -245,12 +219,10 @@ def addvisit(request, id):
     return render(request, 'add-visit.html', context)
 
 
-#    PatientCategory = models.CharField(max_length=255)
-#     Refdr = models.ForeignKey(RefDr,on_delete=models.CASCADE)
-#     Selecttest = models.ForeignKey(Test,on_delete=models.CASCADE)
     
     
 @login_required
+@device_required
 def visitsummary(request):
     visits = Visit.objects.all()
     if request.method == 'POST':
@@ -281,31 +253,31 @@ def visitsummary(request):
 
 
 
-
+@device_required
 def deleteregistersummary(request, id):
     patient = ekon.objects.get(id=id)
     
     patient.delete()
     return redirect('registrationsummary')
-
+@device_required
 def deletevisit(request, id):
     patient = Visit.objects.get(id=id)
     
     patient.delete()
     return redirect('visitsummary')
-
+@device_required
 def delete(request, id):
     patient = RefDr.objects.get(id=id)
     
     patient.delete()
     return redirect('refdrmaster')
-
+@device_required
 def deletetest(request ,id):
     patient = Test.objects.get(id=id)
     patient.delete()
     
     return redirect('testmaster')
-
+@device_required
 def scan(request,id):
     scans = Visit.objects.get(id=id)
     context = {
@@ -314,14 +286,17 @@ def scan(request,id):
     return render(request,'scan.html',context)
 
 @login_required
+@device_required
 def scansummary(request):
     return render(request,'scansummary.html')
 
 @login_required
+@device_required
 def telepathreport(request):
     return render(request,'telepathreport.html')
 
 @login_required
+@device_required
 def addrefdr(request):
     if 'DoctorCode' not in request.session:
         request.session['DoctorCode'] = generate_Doctoruhid()
@@ -342,6 +317,7 @@ def addrefdr(request):
     return render(request,'Refdr.html',{'DoctorCode': request.session['DoctorCode']})
 
 @login_required
+@device_required
 def refdrmaster(request):
     refdrmaster = RefDr.objects.all()
     
@@ -379,6 +355,7 @@ def refdrmaster(request):
     return render(request,'RefDrmaster.html',context)
 
 @login_required
+@device_required
 def edit_refdr(request, id):
     refdr = RefDr.objects.get(id=id)
     if request.method == 'POST':
@@ -398,6 +375,7 @@ def edit_refdr(request, id):
         return render(request, 'edit_refdr.html', {'refdr': refdr})
 
 @login_required
+@device_required
 def edittest(request, id):
     edittest = Test.objects.get(id=id)
     if request.method == 'POST':
@@ -412,5 +390,26 @@ def edittest(request, id):
     else:
         # Render the edit form with the current data filled in
      return render(request, 'edittest.html', {'edittest': edittest})
+ 
+ 
 
 
+def convert_to_dicom(patient_details, image_path):
+    # Load the image
+    img = Image.open(image_path)
+    # Convert the image to a numpy array
+    img_array = np.array(img)
+    # Create a new DICOM object
+    ds = pydicom.Dataset()
+    # Set the patient details
+    ds.PatientName = patient_details.patient_name
+    ds.PatientID = patient_details.patient_id
+    ds.PatientAge = patient_details.patient_age
+    # Set the image data
+    ds.PixelData = img_array.tobytes()
+    ds.Rows, ds.Columns = img_array.shape
+    # Set other DICOM tags as needed
+    # ...
+    # Save the DICOM file
+    output_path = os.path.splitext(image_path)[0] + '.dcm'
+    ds.save_as(output_path)

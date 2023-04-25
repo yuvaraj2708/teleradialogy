@@ -100,10 +100,11 @@
                       
                     <div class="col-md-6">
                         <label class="form-label">Select Test</label>
-                        <select class="form-select" name = "selected_test" required>
+                        <select class="form-select" name="selected_test" required>
+                            <option value="" selected>Please select test</option>
                             {% for selectedtest in select_test %}
-                        <option >{{ selectedtest.name }}</option>
-                       {% endfor %}
+                            <option value="{{selectedtest.testid}}">{{ selectedtest.name }}</option>
+                      
                         </select>
                     </div>
                 </div>
@@ -115,10 +116,14 @@
                             <th>Test Name</th>
                             <th class="text-end">Actions</th>
                           </tr>
+                         
                         </thead>
                         <tbody>
+                            <th>{{selectedtest.testid}} </th>
+                            <th>{{selectedtest.name}}</th>
+                            <th class="text-end">{{selectedtest.specimen_type}}</th>
                           <tr>
-                    
+                            {% endfor %}
                             <td class="text-end">
                                 
                                 <div class="d-flex gap-2 justify-content-end">
