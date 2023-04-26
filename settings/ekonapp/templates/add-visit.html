@@ -103,8 +103,8 @@
                         <select class="form-select" name="selected_test" required>
                             <option value="" selected>Please select test</option>
                             {% for selectedtest in select_test %}
-                            <option value="{{selectedtest.testid}}">{{ selectedtest.name }}</option>
-                      
+                            <option value="{{selectedtest.name}}">{{ selectedtest.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                             <th>{{selectedtest.name}}</th>
                             <th class="text-end">{{selectedtest.specimen_type}}</th>
                           <tr>
-                            {% endfor %}
+                            
                             <td class="text-end">
                                 
                                 <div class="d-flex gap-2 justify-content-end">

@@ -22,7 +22,9 @@ import os
 import pydicom
 from PIL import Image
 import numpy as np
-
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from io import BytesIO
 # Create your views here.
 User = get_user_model()
 
@@ -394,22 +396,57 @@ def edittest(request, id):
  
 
 
-def convert_to_dicom(patient_details, image_path):
-    # Load the image
-    img = Image.open(image_path)
-    # Convert the image to a numpy array
-    img_array = np.array(img)
-    # Create a new DICOM object
-    ds = pydicom.Dataset()
-    # Set the patient details
-    ds.PatientName = patient_details.patient_name
-    ds.PatientID = patient_details.patient_id
-    ds.PatientAge = patient_details.patient_age
-    # Set the image data
-    ds.PixelData = img_array.tobytes()
-    ds.Rows, ds.Columns = img_array.shape
-    # Set other DICOM tags as needed
-    # ...
-    # Save the DICOM file
-    output_path = os.path.splitext(image_path)[0] + '.dcm'
-    ds.save_as(output_path)
+
+def generate_pdf(request, id):
+    visit = get_object_or_404(Visit, id=id)
+   
+    # Get the information from the request
+    uhid = visit.patient.uhid
+    patient_name = visit.patient.patient_name
+    age = visit.patient.age
+    gender = visit.patient.gender
+    contact_number = visit.patient.contact_number
+    email_id = visit.patient.email_id
+    ref_dr = visit.ref_dr
+    
+    # Create a response object with PDF mime type
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="test.pdf"'
+
+    # Create the PDF object
+    pdf = canvas.Canvas(response)
+
+    # Set the font and font size
+    pdf.setFont('Helvetica-Bold', 16)
+
+    # Add the title to the PDF
+    pdf.drawCentredString(300, 750, 'Patient Information')
+    pdf.line(30, 740, 570, 740)
+
+    # Add the information to the PDF
+    pdf.setFont('Helvetica', 12)
+    pdf.drawString(50, 700, 'UHID:')
+    pdf.drawRightString(200, 700, uhid)
+    pdf.drawString(50, 670, 'Patient Name:')
+    pdf.drawRightString(200, 670, patient_name)
+    pdf.drawString(50, 640, 'Age:')
+    pdf.drawRightString(200, 640, age)
+    pdf.drawString(50, 610, 'Gender:')
+    pdf.drawRightString(200, 610, gender)
+    pdf.drawString(50, 580, 'Phone Number:')
+    pdf.drawRightString(200, 580, contact_number)
+    pdf.drawString(50, 550, 'Email ID:')
+    pdf.drawRightString(200, 550, email_id)
+    pdf.drawString(50, 520, 'Referring Doctor:')
+    pdf.drawRightString(200, 520, ref_dr)
+
+    # Add a footer
+    pdf.setFont('Helvetica', 8)
+    pdf.drawString(300, 30, 'Generated on {}'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+
+    # Save the PDF and return the response
+    pdf.save()
+
+    return response
+
+
