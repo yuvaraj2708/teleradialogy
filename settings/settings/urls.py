@@ -16,9 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from rest_framework import routers
+from ekonapp.views import *
+
+router = routers.DefaultRouter()
+router.register(r'ekons', ekonViewSet)
+router.register(r'Device', DeviceViewSet)
+router.register(r'Test', TestViewSet)
+router.register(r'RefDr', RefDrViewSet)
+router.register(r'Visit', VisitViewSet)
+router.register(r'patientcategory', patientcategoryViewSet)
+router.register(r'Scansummary', ScansummaryViewSet)
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('ekonapp.urls')),
+    path('api/', include(router.urls)),
    
 ]

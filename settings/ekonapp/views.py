@@ -25,6 +25,8 @@ import numpy as np
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from io import BytesIO
+from .serializers import *
+from rest_framework import viewsets
 # Create your views here.
 User = get_user_model()
 
@@ -450,3 +452,32 @@ def generate_pdf(request, id):
     return response
 
 
+# APIs
+class ekonViewSet(viewsets.ModelViewSet):
+    queryset = ekon.objects.all()
+    serializer_class = ekonSerializer
+    
+class DeviceViewSet(viewsets.ModelViewSet):
+    queryset = Device.objects.all()
+    serializer_class = DeviceSerializer
+    
+class TestViewSet(viewsets.ModelViewSet):
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
+    
+class RefDrViewSet(viewsets.ModelViewSet):
+    queryset = RefDr.objects.all()
+    serializer_class = RefDrSerializer
+
+class VisitViewSet(viewsets.ModelViewSet):
+    queryset = Visit.objects.all()
+    serializer_class = VisitSerializer
+    
+class patientcategoryViewSet(viewsets.ModelViewSet):
+    queryset = patientcategory.objects.all()
+    serializer_class = patientcategorySerializer
+    
+class ScansummaryViewSet(viewsets.ModelViewSet):
+    queryset = Scansummary.objects.all()
+    serializer_class = ScansummarySerializer
+    
