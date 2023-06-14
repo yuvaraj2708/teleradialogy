@@ -35,12 +35,8 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="form-label">Specialisation *</label>
-              <select  name= "Specialisation" class="form-control" required>
-              <option>Pathology</option>
-              <option>Microbiology</option>
-              <option>Histo Pathology</option>
-              <option>Heamatology</option>
-            </select>
+              <input type="text"  name= "Specialisation" class="form-control" required>
+              
              
             </div>
           </div>
@@ -59,7 +55,7 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="form-label">Mobile *</label>
-              <input type="text" name="Mobile" class="form-control" required>
+              <input type="text" name="Mobile" id="contact_number" class="form-control" required>
             </div>
           </div>
           <div class="col-md-3">
@@ -101,5 +97,19 @@
       // Otherwise, update the input value to start with "Dr"
       doctorNameInput.value = `Dr ${currentValue}`;
     });
+
+    document.querySelector('#contact_number').addEventListener('input', function(event) {
+      // Remove any non-numeric characters from the input field
+      var phoneNumber = this.value.replace(/\D/g, '');
+      
+      // Check if the length of the phone number is exactly 10 digits
+      if (phoneNumber.length !== 10) {
+          // If the phone number is not exactly 10 digits, show an error message
+          this.setCustomValidity('Please enter a 10-digit phone number.');
+      } else {
+          // Otherwise, clear the error message
+          this.setCustomValidity('');
+      }
+  });
   </script>
   

@@ -5,6 +5,24 @@ import re
 import uuid
 
 
+def generate_accession_number():
+    last_accession = ekon.objects.order_by('-id').first()
+    
+    if last_accession:
+        last_accession_id = int(last_accession.accession_number.split('-')[-1])
+        new_accession_id = str(last_accession_id + 1)
+    else:
+        new_accession_id = '100001'
+    
+    return new_accession_id.zfill(6)
+
+
+
+
+ 
+
+
+
 def generate_uhid():
     # Set the starting ID as 1
     start_id = 1
@@ -75,5 +93,6 @@ def generate_Doctoruhid():
         new_did = 'D00001'
 
     return new_did
+
 
 

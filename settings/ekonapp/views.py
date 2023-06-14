@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from .models import *
 import uuid
 from django.http import HttpResponse
-from .utils import generate_uhid,generate_testuhid,generate_Doctoruhid
+from .utils import generate_uhid,generate_testuhid,generate_Doctoruhid,generate_accession_number
 from django.db.models import Q
 from datetime import datetime
 from django.shortcuts import get_object_or_404
@@ -27,6 +27,23 @@ from reportlab.pdfgen import canvas
 from io import BytesIO
 from .serializers import *
 from rest_framework import viewsets
+import barcode
+from barcode.writer import ImageWriter
+from io import BytesIO
+from django.http import HttpResponse
+import barcode
+from barcode.writer import ImageWriter
+from io import BytesIO
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
+import barcode
+from barcode.writer import ImageWriter
+import io
+from django.http import FileResponse
+from reportlab.lib.pagesizes import A4
+
 # Create your views here.
 User = get_user_model()
 
@@ -35,7 +52,10 @@ User = get_user_model()
 def patientregistration(request):
     if 'uhid' not in request.session:
         request.session['uhid'] = generate_uhid()
-    
+
+    if 'accession_number' not in request.session:
+        request.session['accession_number'] = generate_accession_number()
+
     if request.method == 'POST':
         # Extract form data from request.POST dictionary
         title = request.POST.get('title')
@@ -45,19 +65,43 @@ def patientregistration(request):
         age = request.POST.get('age')
         email_id = request.POST.get('email_id')
         contact_number = request.POST.get('contact_number')
-        patient_history = request.POST.get('patient_history')
+        # patient_history = request.POST.get('patient_history')
         status = request.POST.get('status')
         date = request.POST.get('date')
+
+        # Generate a new accession number
+        accession_number = generate_accession_number()
+
         # Create a new Patient object
-        patient = ekon(uhid=request.session['uhid'], title=title, gender=gender, patient_name=patient_name, dob=dob,
-                          age=age, email_id=email_id, contact_number=contact_number, patient_history=patient_history,
-                          status=status,date=date)
+        patient = ekon(
+            uhid=request.session['uhid'],
+            title=title,
+            gender=gender,
+            patient_name=patient_name,
+            dob=dob,
+            age=age,
+            email_id=email_id,
+            contact_number=contact_number,
+            status=status,
+            date=date,
+            accession_number=accession_number
+        )
+
         # Save the Patient object to the database
         patient.save()
+
         # Generate a new uhid for the next patient registration
         request.session['uhid'] = generate_uhid()
+
+        # Create a folder for barcode images if it doesn't exist
+       
+        # Update the stored accession number and barcode path in the session
+        request.session['accession_number'] = accession_number
+       
         return redirect('registrationsummary')
+
     return render(request, 'patient-registration.html', {'uhid': request.session['uhid']})
+
 
 
 
@@ -191,11 +235,27 @@ def addtest(request):
 @device_required
 def testmaster(request):
     testmasters = Test.objects.all()
-    
+    departments = Test.objects.values('department').distinct()
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        department = request.POST.get('department')
+        
+        # Filter by test name or code
+        if name:
+            testmasters = testmasters.filter(models.Q(name__icontains=name) | models.Q(testid__icontains=name))
+        
+        # Filter by department
+        if department:
+            testmasters = testmasters.filter(department__icontains=department)
+        
     context = {
-        'testmasters':testmasters,
+        'testmasters': testmasters,
+        'departments': departments,
     }
-    return render(request,'tests-master.html',context)
+        
+    return render(request, 'tests-master.html', context)
+ 
 
 @login_required
 @device_required
@@ -254,7 +314,6 @@ def visitsummary(request):
         context = {'visits': visits}
         
     return render(request, 'visit-summary.html', context)
-
 
 
 @device_required
@@ -399,57 +458,59 @@ def edittest(request, id):
 
 
 
-def generate_pdf(request, id):
-    visit = get_object_or_404(Visit, id=id)
-   
-    # Get the information from the request
-    uhid = visit.patient.uhid
-    patient_name = visit.patient.patient_name
-    age = visit.patient.age
-    gender = visit.patient.gender
-    contact_number = visit.patient.contact_number
-    email_id = visit.patient.email_id
-    ref_dr = visit.ref_dr
-    
-    # Create a response object with PDF mime type
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="test.pdf"'
 
-    # Create the PDF object
-    pdf = canvas.Canvas(response)
 
-    # Set the font and font size
-    pdf.setFont('Helvetica-Bold', 16)
+import io
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+import barcode
+from barcode.writer import ImageWriter
+import os
+from reportlab.lib.utils import ImageReader
 
-    # Add the title to the PDF
-    pdf.drawCentredString(300, 750, 'Patient Information')
-    pdf.line(30, 740, 570, 740)
+@login_required
+@device_required
+def downloadbarcode(request, patient_id):
+    patient = ekon.objects.get(id=patient_id)
 
-    # Add the information to the PDF
-    pdf.setFont('Helvetica', 12)
-    pdf.drawString(50, 700, 'UHID:')
-    pdf.drawRightString(200, 700, uhid)
-    pdf.drawString(50, 670, 'Patient Name:')
-    pdf.drawRightString(200, 670, patient_name)
-    pdf.drawString(50, 640, 'Age:')
-    pdf.drawRightString(200, 640, age)
-    pdf.drawString(50, 610, 'Gender:')
-    pdf.drawRightString(200, 610, gender)
-    pdf.drawString(50, 580, 'Phone Number:')
-    pdf.drawRightString(200, 580, contact_number)
-    pdf.drawString(50, 550, 'Email ID:')
-    pdf.drawRightString(200, 550, email_id)
-    pdf.drawString(50, 520, 'Referring Doctor:')
-    pdf.drawRightString(200, 520, ref_dr)
+    # Generate PDF with barcode and patient details
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
+    c.setFont("Helvetica", 12)
 
-    # Add a footer
-    pdf.setFont('Helvetica', 8)
-    pdf.drawString(300, 30, 'Generated on {}'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+    # Calculate the center positions
+    page_width, page_height = A4
+    center_x = page_width / 2
+    center_y = page_height / 2
 
-    # Save the PDF and return the response
-    pdf.save()
+    # Draw patient details
+    text_height = 20
+    c.drawString(center_x, center_y + 50, f" {patient.patient_name}")
+    c.drawString(center_x, center_y + 50 - text_height, f"Age: {patient.age}")
+    c.drawString(center_x, center_y + 50 - 2 * text_height, f"Gender: {patient.gender}")
 
+    # Add barcode image using the accession number
+    barcode_data = patient.accession_number
+    barcode_image = barcode.get('code128', barcode_data, writer=ImageWriter()).render()
+    barcode_image_reader = ImageReader(barcode_image)
+
+    # Draw barcode image on the PDF canvas
+    barcode_width = 200
+    barcode_height = 100
+    barcode_x = center_x - (barcode_width / 2)
+    barcode_y = center_y - (barcode_height / 2)
+    c.drawImage(barcode_image_reader, barcode_x, barcode_y, width=barcode_width, height=barcode_height)
+
+    c.showPage()
+    c.save()
+
+    # Rewind the buffer and create an HTTP response with the PDF data
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename=barcode.pdf'
     return response
+
 
 
 # APIs

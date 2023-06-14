@@ -60,12 +60,8 @@
                             <input type="text"  value={{patient.contact_number}} class="form-control"   readonly  >
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="form-label">Patient History</label>
-                            <input type="text"  value={{patient.patient_history}} class="form-control" readonly    >
-                        </div>
-                    </div>
+                 
+                    
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Status</label>
@@ -75,7 +71,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Patient Category </label>
-                            <select class="form-select" name = "patient_category" required>
+                            <select class="form-select" name = "patient_category" >
                                 {% for patientcategory in patientscategory %}
                             <option >{{ patientcategory.category }}</option>
                               {% endfor %}

@@ -31,6 +31,7 @@ urlpatterns = [
     path('refdrmaster/',refdrmaster,name='refdrmaster'),
     path('edit_refdr/<int:id>/',edit_refdr,name="edit_refdr"),
     path('edittest/<int:id>/',edittest,name='edittest'),
-    path('generate_pdf/<int:id>/', generate_pdf, name='generate_pdf')
+    path('downloadbarcode/<int:patient_id>/', downloadbarcode, name='downloadbarcode'),
+  
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

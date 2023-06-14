@@ -76,7 +76,7 @@ class Test(models.Model):
     date =  models.DateField(auto_now_add=True)
     name = models.CharField(max_length=100, unique=True)
     specimen_type = models.CharField(max_length=100)
-    department = models.CharField(max_length=100, choices=[('microbiology', 'Microbiology'), ('pathology', 'Pathology'), ('radiology', 'Radiology')])
+    department = models.CharField(max_length=100)
     report_format = models.CharField(max_length=100)
     reporting_rate = models.DecimalField(max_digits=5, decimal_places=2)
 
@@ -118,7 +118,6 @@ class ekon(models.Model):
     age = models.CharField(max_length=255)
     email_id = models.EmailField()
     contact_number = models.CharField(max_length=255)
-    patient_history = models.TextField()
     date =  models.DateField(auto_now_add=True)
     
     Active = 'Active'
@@ -128,7 +127,7 @@ class ekon(models.Model):
         (Inactive, 'Inactive'),
     ]
     status = models.CharField(max_length=255, choices=STATUS_CHOICES)
-  
+    accession_number = models.CharField(max_length=50)
     
 
 import uuid
