@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from .models import *
 import uuid
 from django.http import HttpResponse
-from .utils import generate_uhid,generate_testuhid,generate_Doctoruhid,generate_accession_number
+from .utils import generate_uhid,generate_testuhid,generate_Doctoruhid,generate_accession_number,generate_visit_id
 from django.db.models import Q
 from datetime import datetime
 from django.shortcuts import get_object_or_404
@@ -150,7 +150,7 @@ def registerlogin(request):
         # Check if user has a registered device
         if Device.objects.filter(user=user, is_registered=True).exists():
             # User has a registered device, show the registration summary page
-            return render(request, 'registration-summary.html')
+            return redirect('registersummary/')
         else:
             # User doesn't have a registered device, redirect to the device registration page
             return redirect('register_device')
@@ -264,13 +264,16 @@ def addvisit(request, id):
     patient = ekon.objects.get(id=id)
     select_test = Test.objects.all()
     patientscategory = patientcategory.objects.all()
+    if 'visit_id' not in request.session:
+        request.session['visit_id'] = generate_visit_id()
     if request.method == 'POST':
         # Extract form data from request.POST dictionary
+        visit_id = request.POST.get('visit_id')
         patient_category = request.POST.get('patient_category')
         ref_dr = request.POST.get('ref_dr')
         selected_test = request.POST.get('selected_test')
         # Create a new Visit object
-        visit = Visit(patient=patient, patient_category=patient_category, ref_dr=ref_dr, selected_test=selected_test)
+        visit = Visit(visit_id=request.session['visit_id'],patient=patient, patient_category=patient_category, ref_dr=ref_dr, selected_test=selected_test)
         # Save the Visit object to the database
         visit.save()
         # Redirect to the page where you want to display both models

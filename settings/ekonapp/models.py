@@ -137,12 +137,9 @@ class Visit(models.Model):
     patient_category = models.CharField(max_length=255)
     ref_dr =  models.CharField(max_length=255)
     selected_test = models.CharField(max_length=255)
-    visit_id = models.CharField(max_length=7, unique=True, editable=False)
+    visit_id = models.CharField(max_length=100)
     date =  models.DateField(auto_now_add=True)
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.visit_id = 'V' + str(uuid.uuid4().int)[:5]
-        super(Visit, self).save(*args, **kwargs)
+   
 
     
     

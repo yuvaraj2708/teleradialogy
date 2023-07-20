@@ -119,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 import os
 LOGIN_URL = '/login/'
-
+LOGOUT_REDIRECT_URL = '/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

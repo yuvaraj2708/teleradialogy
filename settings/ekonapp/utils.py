@@ -1,6 +1,6 @@
 import os
 from django.shortcuts import redirect
-from .models import Test,ekon,RefDr
+from .models import Test,ekon,RefDr,Visit
 import re
 import uuid
 
@@ -72,13 +72,13 @@ def generate_testuhid():
 
 
 def generate_visit_id():
-    # Generate a UUID and extract the numerical portion
-    uuid_num = int(re.sub('[^0-9]', '', uuid.uuid4().hex))
-    # Pad the numerical portion with leading zeros to 5 digits
-    visit_num = str(uuid_num).zfill(5)
-    # Concatenate the numerical portion with the letter "V"
-    visit_id = f'V{visit_num}'
-    return visit_id
+   last_visit_id = Visit.objects.order_by('-id').first()
+   if last_visit_id:
+        last_Vid = int(last_visit_id.visit_id.split('V')[-1])
+        new_Vid = f'V{last_Vid+1:05}'
+   else:
+        new_Vid = 'V00001'
+   return new_Vid
 
 
 def generate_Doctoruhid():
