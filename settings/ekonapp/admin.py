@@ -38,3 +38,5 @@ admin.site.register(Visit)
 admin.site.register(patientcategory)
 
 admin.site.register(Scansummary)
+
+admin.site.register(Devicecheck)

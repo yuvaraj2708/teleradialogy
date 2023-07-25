@@ -67,7 +67,15 @@ class Device(models.Model):
     mobile_number = models.CharField(max_length=20)
     email = models.EmailField()
     is_registered = models.BooleanField(default=True)
-    
+ 
+class Devicecheck(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    device_id = models.CharField(max_length=50)
+    client_name = models.CharField(max_length=100)
+    address = models.CharField(max_length=200)
+    pin_code = models.CharField(max_length=10)
+    mobile_number = models.CharField(max_length=20)
+    email = models.EmailField()   
 
     
     

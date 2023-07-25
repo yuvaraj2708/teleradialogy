@@ -6,34 +6,16 @@ import uuid
 from django.http import HttpResponse
 from .utils import generate_uhid,generate_testuhid,generate_Doctoruhid,generate_accession_number,generate_visit_id
 from django.db.models import Q
-from datetime import datetime
-from django.shortcuts import get_object_or_404
-from django.template import loader
-from django.http import HttpResponseNotFound
-from django.contrib import messages
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from django.views.generic import TemplateView
-from django.contrib.auth.forms import AuthenticationForm
-from .forms import LoginForm
-from django.contrib.auth import login,authenticate
 from .decorators import device_required
-import os
-import pydicom
-from PIL import Image
-import numpy as np
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
-from io import BytesIO
 from .serializers import *
 from rest_framework import viewsets
 import barcode
 from barcode.writer import ImageWriter
-from io import BytesIO
 from django.http import HttpResponse
 import barcode
 from barcode.writer import ImageWriter
-from io import BytesIO
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
@@ -41,8 +23,9 @@ from reportlab.pdfgen import canvas
 import barcode
 from barcode.writer import ImageWriter
 import io
-from django.http import FileResponse
 from reportlab.lib.pagesizes import A4
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
 User = get_user_model()
@@ -174,7 +157,22 @@ def register_device(request):
             # Render registration form with an error message
             return render(request, 'registerdevice.html', {'error': 'Please fill in all the required fields.'})
         
-        # Check if device is already registered
+        # Check if the device information matches in both tables
+        try:
+            devicecheck = Devicecheck.objects.get(
+                device_id=device_id,
+                client_name=client_name,
+                address=address,
+                pin_code=pin_code,
+                mobile_number=mobile_number,
+                email=email,
+            )
+            # Device information matches in Devicecheck table, proceed with registration
+        except Devicecheck.DoesNotExist:
+            # Device information does not match in Devicecheck table, registration failed
+            return render(request, 'registerdevice.html', {'error': 'Device registration failed. Please check your device information.'})
+
+        # Check if device is already registered in Device table
         try:
             device = Device.objects.get(device_id=device_id)
             if device.is_registered:
@@ -194,10 +192,9 @@ def register_device(request):
         device.user = request.user
         device.save()
 
-        # Set the is_device_registered flag on the user object
-        user = request.user
-        user.is_device_registered = True
-        user.save()
+        # Set the is_device_registered flag on the user object in Devicecheck table
+        devicecheck.user.is_device_registered = True
+        devicecheck.user.save()
 
         # Redirect to the registration summary page
         return redirect('registrationsummary')
