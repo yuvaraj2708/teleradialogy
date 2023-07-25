@@ -206,7 +206,6 @@ def register_device(request):
 
 
 
-
 @login_required
 @device_required
 def addtest(request):

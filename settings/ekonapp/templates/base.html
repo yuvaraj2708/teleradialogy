@@ -10,7 +10,7 @@
     <!-- Core theme CSS-->
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" />
     <link href="{% static 'css/custom.css' %}" rel="stylesheet" />
-    
+    <link href="{% static "js/bootstrap.bundle.min.js" %}"rel="stylesheet" />
 </head>
 
 
@@ -19,55 +19,50 @@
         <div class="container-fluid px-4">
             <div class="d-flex pt-1 align-items-center">
                 <div>
-                    
+                    {% block head %}
                     <img src="{% static 'images/app-logo.svg' %}" class="app-logo">
                     <span class="badge badge-secondary">
                 </div>
-                {% block head %}
-                <div class="nav-item" style=" color: white;">
-                    <br> <a class="nav-link" href="{% url 'registrationsummary' %}">Registration Summary<span class="badge badge-secondary">  </a>
-                    <br></div>
+                
+                 <div class="nav-item" style=" color: white;">
+                     <a class="nav-link" href="{% url 'registrationsummary' %}">Registration Summary<span class="badge badge-secondary">  </a>
+                    </div>
 
 
                 <div class="nav-item" style=" color: white;">
-                    <br><a class="nav-link" href="{% url 'patient-registration' %}">Patient Registration <span class="badge badge-secondary"> </a>
-                    <br></div><br>
+                    <a class="nav-link" href="{% url 'patient-registration' %}">Patient Registration <span class="badge badge-secondary"> </a>
+                   </div>
                 
                
                
-                <div class="nav-item" style=" color: white;">
-                    <br><a class="nav-link" href="{% url 'visitsummary' %}">Visit Summary <span class="badge badge-secondary"> </a>
-                    <br></div>
+                <div class="nav-item" style=" color: white ">
+                    <a class="nav-link" href="{% url 'visitsummary' %}">Visit Summary <span class="badge badge-secondary"> </a>
+                    </div>
 
-
-               
-                    <div class="nav-item" style=" color: white;">
-                      <br><a class="nav-link" href="{% url 'testmaster' %}">Test Master <span class="badge badge-secondary"> </a>
-                        <br></div>
-
-                    <div class="nav-item" style=" color: white;">
-                            <br><a class="nav-link" href="{% url 'refdrmaster' %}">Ref master <span class="badge badge-secondary"> </a>
-                            <br></div>
-
-                        
-                      
-                                    
-                <div class="nav-item" style=" color: white;">
-                    <br> <a class="nav-link" href="{% url 'logout' %}">Logout<span class="badge badge-secondary"> </a>
-                    <br></div>
+                    <div class="nav-item dropdown dropdown-hover" style=" color: white;">
+                        <a class="nav-link" href="#" >Master</a>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{% url 'testmaster' %}">Test Master</a></li>
+                          <li><a class="dropdown-item" href="{% url 'refdrmaster' %}">Ref master</a></li>
+                        </ul>
+                    </div> 
                     
-        {% endblock %}
+                    
+                <div class="nav-item" style=" color: white ">
+                     <a class="nav-link" href="{% url 'logout' %}">Logout </a>
+                    </div> 
+                    
+        
                 <div class="ms-auto">
                     
                     <ul class="nav menu-nav">
                         
-                        <li class="nav-item">
+                        <div class="nav-item">
                             <a class="nav-link active" href="#">
-                                <svg>
-                                    <use xlink:href="{% static 'images/iocn.svg#person' %}"></use>
-                                </svg>
+                                <img src="{% static 'images/microscope-svgrepo-com.svg' %}" class="app-logo">
+                                
                             </a>
-                        </li>
+                        </div>
                         
                    
                         
@@ -76,6 +71,7 @@
                                 <svg>
                                     <use xlink:href="{% static 'images/iocn.svg#setting' %}"></use>
                                 </svg>
+                                {% endblock %}
                             </a>
                         </li>
                     </ul>

@@ -67,6 +67,15 @@ body
   height: 44px;
 }
 /*menu*/
+.main-menu .nav-item > .nav-link
+{
+    color: #fff;
+}
+.dropdown-hover:hover .dropdown-menu
+{
+  display: block;
+}
+
 .menu-nav .nav-link
 {
   padding: 0.3rem 0.5rem 0.7rem 0.5rem;
