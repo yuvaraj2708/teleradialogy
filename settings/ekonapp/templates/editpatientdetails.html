@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+   
+
+    <main>
+        <div class="mb-4">
+            <form method="post" >
+
+                {% csrf_token %}
+            <h5 class="page-heading">Patient Registration</h5>
+        </div>
+        <div class="auto-scroll">
+            <div class="bg-white rounded-2 p-3 mb-4">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">UHID</label disabled>
+                            <input type="text" name = "uhid" value="{{ uhid }}" class="form-control" readonly>
+                        </div>  
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group d-flex gap-3">
+                            <div class="w-50">
+                                <label class="form-label">Title</label>
+                                <select name="title" class="form-select" required onchange="updateGenderSelect(this)">
+                                  <option value="" selected>-</option>
+                                  <option value="Mr">Mr</option>
+                                  <option value="Miss">Miss</option>
+                                </select>
+                              </div>
+                              <div class="w-50">
+                                <label class="form-label">Gender</label>
+                                <select name="gender" class="form-select" required>
+                                  <option value="" selected>-</option>
+                                  <option value="male">Male</option>
+                                  <option value="female">Female</option>
+                                </select>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Patient Name</label>
+                            <input type="text" name="patient_name" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group d-flex gap-3">
+                            <div class="w-75">
+                                <label class="form-label">DOB</label>
+                                <input type="date" name="dob" id="dob" class="form-control" onchange="calculateAge()" required>
+                            </div>
+                            <div class="w-25">
+                                <label class="form-label">Age</label>
+                                <input type="text" name="age" id="age" class="form-control" required>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Email ID</label>
+                            <input type="email" name="email_id" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Mobile</label>
+                            <input type="text" name="contact_number" class="form-control" id="contact_number"  maxlength="10" required>
+
+                        </div>
+                    </div>
+                   
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status" required>
+                                 
+                                <option value="Active" name="status" selected>Active</option>
+                                <option value="Inactive" name="status">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group d-flex gap-3 justify-content-center">
+                    <button type="submit" class="theme-btn">Save</button>
+                    
+                    <button type="reset" class="theme-btn">Clear</button>
+                </form>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+</body>
+
+</html>
+<script>
+    function calculateAge() {
+        var dob = document.getElementById("dob").value;
+        var today = new Date();
+        var birthDate = new Date(dob);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var month = today.getMonth() - birthDate.getMonth();
+        if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age == 0) {
+            var diff = today.getTime() - birthDate.getTime();
+            var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            if (days > 1) {
+                document.getElementById("age").value = days + " days";
+            } else {
+                document.getElementById("age").value = days + " day";
+            }
+        } else if (age == 1) {
+            document.getElementById("age").value = age + " year";
+        } else {
+            document.getElementById("age").value = age + " years";
+        }
+    }
+  document.querySelector('#contact_number').addEventListener('input', function(event) {
+    // Remove any non-numeric characters from the input field
+    var phoneNumber = this.value.replace(/\D/g, '');
+    
+    // Check if the length of the phone number is exactly 10 digits
+    if (phoneNumber.length !== 10) {
+        // If the phone number is not exactly 10 digits, show an error message
+        this.setCustomValidity('Please enter a 10-digit phone number.');
+    } else {
+        // Otherwise, clear the error message
+        this.setCustomValidity('');
+    }
+});
+function updateGenderSelect(titleSelect) {
+    var genderSelect = titleSelect.parentElement.nextElementSibling.querySelector('select');
+    var selectedTitle = titleSelect.value;
+    var selectedGender = (selectedTitle == 'Mr') ? 'male' : 'female';
+    genderSelect.querySelector(`option[value="${selectedGender}"]`).selected = true;
+  }
+
+</script>
+
+{% endblock %}

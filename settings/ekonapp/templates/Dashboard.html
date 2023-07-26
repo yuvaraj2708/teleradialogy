@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<html lang="en">
+
+<main>
+  <div class="mb-4">
+    <h5 class="page-heading">Patient and Test Statistics</h5>
+  </div>
+  <div class="auto-scroll">
+    <div class="bg-white rounded-2 p-3 mb-4">
+      <div class="row">
+        
+        <div class="col-md-4">
+          <div class="card mb-3 rounded-3 shadow-sm">
+            <div class="card-body text-center">
+              <h5 class="card-title">Total Patients:</h5>
+              <p class="card-text">{{ patient_name_count }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-3 rounded-3 shadow-sm">
+            <div class="card-body text-center">
+              <h5 class="card-title">Total Tests:</h5>
+              <p class="card-text">{{ total_tests_count }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+</html>
+{% endblock %}

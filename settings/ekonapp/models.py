@@ -11,18 +11,20 @@ import numpy as np
 # Create your models here.
 
 
+from django.contrib.auth.models import BaseUserManager
+
 class CustomUserManager(BaseUserManager):
-    def create_user(self, name, password, **extra_fields):
+    def create_user(self, name, email, password, **extra_fields):
         if not name:
             raise ValueError('The Name field must be set')
 
-        name = self.normalize_email(name)
-        user = self.model(name=name, **extra_fields)
+        email = self.normalize_email(email)
+        user = self.model(name=name, email=email, **extra_fields)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, name, password, **extra_fields):
+    def create_superuser(self, name, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -31,7 +33,9 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(name, password, **extra_fields)
+        return self.create_user(name, email, password, **extra_fields)
+
+
 
 
 
@@ -42,6 +46,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    email = models.EmailField(unique=True)
     is_device_registered = models.BooleanField(default=False)  # new field
     
     USERNAME_FIELD = 'name'
@@ -57,6 +62,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 User = get_user_model()
+user = CustomUser.objects.get(email='admin@gmail.com')
 
 class Device(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -144,7 +150,7 @@ class Visit(models.Model):
     patient = models.ForeignKey(ekon, on_delete=models.CASCADE)
     patient_category = models.CharField(max_length=255)
     ref_dr =  models.CharField(max_length=255)
-    selected_test = models.CharField(max_length=255)
+    selected_test = models.ManyToManyField(Test)
     visit_id = models.CharField(max_length=100)
     date =  models.DateField(auto_now_add=True)
    

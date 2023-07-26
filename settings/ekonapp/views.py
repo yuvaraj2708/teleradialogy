@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .models import *
 import uuid
+from django.contrib.auth import views as auth_views
 from django.http import HttpResponse
 from .utils import generate_uhid,generate_testuhid,generate_Doctoruhid,generate_accession_number,generate_visit_id
 from django.db.models import Q
@@ -26,9 +27,38 @@ import io
 from reportlab.lib.pagesizes import A4
 from django.core.mail import send_mail
 from django.conf import settings
-
+from django.contrib.auth.models import User
 # Create your views here.
 User = get_user_model()
+
+@login_required
+def Dashboard(request):
+    # Get the count of registered patients for each status (Active and Inactive)
+    patient_name_count = ekon.objects.all().count()
+    
+
+    # Calculate the total number of registered patients
+   
+    # Assuming the total number of tests is a field in the Visit model
+    total_tests_count = Visit.objects.all().count()
+
+    return render(request, 'Dashboard.html', {
+        'patient_name_count':patient_name_count,
+        'total_tests_count': total_tests_count,
+    })
+
+
+
+
+def my_password_reset_view(request):
+    # Specify the User model for password reset
+    model = User
+
+
+@login_required
+def Settings(request):
+    return render(request,"Settings.html")
+
 
 @login_required
 @device_required
@@ -279,6 +309,7 @@ def addvisit(request, id):
                'select_test':select_test,
                'patientscategory':patientscategory,
                }
+    
     return render(request, 'add-visit.html', context)
 
 
@@ -453,7 +484,28 @@ def edittest(request, id):
         # Render the edit form with the current data filled in
      return render(request, 'edittest.html', {'edittest': edittest})
  
- 
+@login_required
+@device_required
+def editpatient(request, id):
+    editpatient = ekon.objects.get(id=id)
+    if request.method == 'POST':
+           editpatient.uhid = request.POST.get('uhid')
+           editpatient.title = request.POST.get('title')
+           editpatient.male = request.POST.get('male')
+           editpatient.gender = request.POST.get('gender')
+           editpatient.patient_name = request.POST.get('patient_name')
+           editpatient.dob = request.POST.get('dob')
+           editpatient.age = request.POST.get('age')
+           editpatient.email_id = request.POST.get('email_id')
+           editpatient.contact_number = request.POST.get('contact_number')
+           editpatient.date = request.POST.get('date')
+           editpatient.status = request.POST.get('status')
+           
+           editpatient.save()
+           return redirect('registrationsummary')
+    else:
+        # Render the edit form with the current data filled in
+     return render(request, 'editpatientdetails.html', {'editpatient': editpatient})
 
 
 

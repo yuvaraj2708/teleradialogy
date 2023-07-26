@@ -19,24 +19,28 @@
         <div class="container-fluid px-4">
             <div class="d-flex pt-1 align-items-center">
                 <div>
-                    {% block head %}
+                    
                     <img src="{% static 'images/app-logo.svg' %}" class="app-logo">
                     <span class="badge badge-secondary">
                 </div>
-                
+                {% block head %}
+                <div class="nav-item" style=" color: white;">
+                    <a class="nav-link" href="{% url 'Dashboard' %}">Dashboard <span class="badge badge-secondary"> </a>
+                   </div>
+                 
                  <div class="nav-item" style=" color: white;">
-                     <a class="nav-link" href="{% url 'registrationsummary' %}">Registration Summary<span class="badge badge-secondary">  </a>
+                     <a class="nav-link" href="{% url 'registrationsummary' %}">Register Patient<span class="badge badge-secondary">  </a>
                     </div>
 
 
-                <div class="nav-item" style=" color: white;">
+                {% comment %} <div class="nav-item" style=" color: white;">
                     <a class="nav-link" href="{% url 'patient-registration' %}">Patient Registration <span class="badge badge-secondary"> </a>
                    </div>
-                
+                 {% endcomment %}
                
                
                 <div class="nav-item" style=" color: white ">
-                    <a class="nav-link" href="{% url 'visitsummary' %}">Visit Summary <span class="badge badge-secondary"> </a>
+                    <a class="nav-link" href="{% url 'visitsummary' %}">Registration Summary<span class="badge badge-secondary"> </a>
                     </div>
 
                     <div class="nav-item dropdown dropdown-hover" style=" color: white;">
@@ -46,9 +50,11 @@
                           <li><a class="dropdown-item" href="{% url 'refdrmaster' %}">Ref master</a></li>
                         </ul>
                     </div> 
-                    
-                    
-                <div class="nav-item" style=" color: white ">
+                    <div class="nav-item" style=" color: white;">
+                        <a class="nav-link" href="{% url 'Settings' %}"> Settings<span class="badge badge-secondary">  </a>
+                       </div>
+                       
+                     <div class="nav-item" style=" color: white ">
                      <a class="nav-link" href="{% url 'logout' %}">Logout </a>
                     </div> 
                     

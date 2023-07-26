@@ -23,37 +23,25 @@ def generate_accession_number():
 
 
 
-def generate_uhid():
-    # Set the starting ID as 1
-    start_id = 1
-    
-    # Check if the file with the last used ID exists
-    if os.path.exists('last_uhid.txt'):
-        # If it does, read the last used ID from the file
-        with open('last_uhid.txt', 'r') as f:
-            last_uhid = int(f.read().strip())
-    else:
-        # If the file doesn't exist, start with the specified ID
-        last_uhid = start_id - 1
-    
-    # Increment the last used ID and generate the new ID
-    new_uhid = f'P{last_uhid+1:05}'
-    
-    # Write the new last used ID to the file
-    with open('last_uhid.txt', 'w') as f:
-        f.write(str(last_uhid + 1))
-    
-    return new_uhid
-
-
 # def generate_uhid():
-#     last_uhid = ekon.objects.order_by('-id').first()
-#     if last_uhid:
-#         last_uhid = int(last_uhid.uhid.split('P')[-1])
-#         new_uhid = f'P{last_uhid+1:05}'
-#     else:
-#         new_uhid = 'P00001'
-#     return new_uhid
+    
+#    last_patient_id = ekon.objects.order_by('-id').first()
+#    if last_patient_id:
+#         last_Pid = int(last_patient_id.uhid.split('P')[-1])
+#         new_Pid = f'P{last_Pid+1:05}'
+#    else:
+#         new_Pid = 'P00001'
+#    return new_Pid
+
+
+def generate_uhid():
+    last_uhid = ekon.objects.order_by('-id').first()
+    if last_uhid:
+        last_uhid = int(last_uhid.uhid.split('P')[-1])
+        new_uhid = f'P{last_uhid+1:05}'
+    else:
+        new_uhid = 'P00001'
+    return new_uhid
 
 
 
