@@ -13,16 +13,12 @@ from reportlab.pdfgen import canvas
 from .serializers import *
 from rest_framework import viewsets
 import barcode
-from barcode.writer import ImageWriter
 from django.http import HttpResponse
-import barcode
 from barcode.writer import ImageWriter
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
-import barcode
-from barcode.writer import ImageWriter
 import io
 from reportlab.lib.pagesizes import A4
 from django.core.mail import send_mail
@@ -297,9 +293,11 @@ def addvisit(request, id):
         visit_id = request.POST.get('visit_id')
         patient_category = request.POST.get('patient_category')
         ref_dr = request.POST.get('ref_dr')
-        selected_test = request.POST.get('selected_test')
+        selected_tests = request.POST.getlist('selected_test')
+        # Join the selected_test list using a delimiter (e.g., comma)
+        selected_test_str = ','.join(selected_tests)
         # Create a new Visit object
-        visit = Visit(visit_id=request.session['visit_id'],patient=patient, patient_category=patient_category, ref_dr=ref_dr, selected_test=selected_test)
+        visit = Visit(visit_id=request.session['visit_id'], patient=patient, patient_category=patient_category, ref_dr=ref_dr, selected_test=selected_test_str)
         # Save the Visit object to the database
         visit.save()
         # Redirect to the page where you want to display both models
@@ -489,36 +487,27 @@ def edittest(request, id):
 def editpatient(request, id):
     editpatient = ekon.objects.get(id=id)
     if request.method == 'POST':
-           editpatient.uhid = request.POST.get('uhid')
-           editpatient.title = request.POST.get('title')
-           editpatient.male = request.POST.get('male')
-           editpatient.gender = request.POST.get('gender')
-           editpatient.patient_name = request.POST.get('patient_name')
-           editpatient.dob = request.POST.get('dob')
-           editpatient.age = request.POST.get('age')
-           editpatient.email_id = request.POST.get('email_id')
-           editpatient.contact_number = request.POST.get('contact_number')
-           editpatient.date = request.POST.get('date')
-           editpatient.status = request.POST.get('status')
-           
-           editpatient.save()
-           return redirect('registrationsummary')
-    else:
-        # Render the edit form with the current data filled in
-     return render(request, 'editpatientdetails.html', {'editpatient': editpatient})
+        editpatient.uhid = request.POST.get('uhid')
+        editpatient.title = request.POST.get('title')
+        editpatient.gender = request.POST.get('gender')
+        editpatient.patient_name = request.POST.get('patient_name')
+        editpatient.dob = request.POST.get('dob')  # Make sure the date format is correct
+        editpatient.age = request.POST.get('age')
+        editpatient.email_id = request.POST.get('email_id')
+        editpatient.contact_number = request.POST.get('contact_number')
+        editpatient.status = request.POST.get('status')
+        editpatient.save()
+        return redirect('registrationsummary')
+
+    # Render the edit form with the current data filled in
+    return render(request, 'editpatientdetails.html', {'editpatient': editpatient})
 
 
 
 
 
-import io
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from django.http import HttpResponse
-import barcode
-from barcode.writer import ImageWriter
-import os
-from reportlab.lib.utils import ImageReader
+
+
 
 @login_required
 @device_required

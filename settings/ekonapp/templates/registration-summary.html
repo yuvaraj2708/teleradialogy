@@ -71,25 +71,36 @@
                       <tbody>
                         <tr>
                           {% for Patient in patients %}
+                          <div>
+                            
                           <td class="text-nowrap">
-                            <span>{{Patient.date}}</span><br><span>{{Patient.uhid }}</span>
+                            <a href="{% url 'editpatient' Patient.id %}" >
+                            <span>{{Patient.uhid}}</span><br><span>{{Patient.date }}</span>
+                            </a>
                           </td>
                           <td>
                             <div>
-                              <div class="text-d-blue fw-semibold">{{Patient.patient_name}}</div>
+                              <a href="{% url 'editpatient' Patient.id %}" >
+                              <div class="text-d-blue fw-semibold">{{Patient.title}} {{Patient.patient_name}}</div>
+                              
                               <div>
-                                <span>{{Patient.age}}</span>
+                                
+                                <span>{{Patient.age}}/{{Patient.gender}}</span>
                                 <svg class="gender-male">
                                   <use xlink:href="assets/images/iocn.svg#gender-male"></use>
                               </svg>
                               </div>
                           </div>
+                        </a>
                           </td>
-                          <td>{{Patient.email_id}}</td>
-                          <td>{{Patient.contact_number}}</td>
-                          <td>
+                          
+                          <td><a href="{% url 'editpatient' Patient.id %}" >{{Patient.email_id}}</a></td>
+                          <td><a href="{% url 'editpatient' Patient.id %}" >{{Patient.contact_number}}</a></td> 
+                          <td><a href="{% url 'editpatient' Patient.id %}" >
                               <div class="sts-green">{{Patient.status}}</div>
-                          </td>
+                          </a>
+                            </td>
+                        
                           <td class="text-end">
                             <div class="d-flex gap-2 justify-content-end">
                                 

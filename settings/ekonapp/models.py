@@ -71,6 +71,8 @@ class Device(models.Model):
     mobile_number = models.CharField(max_length=20)
     email = models.EmailField()
     is_registered = models.BooleanField(default=True)
+    def __str__(self):
+        return self.client_name
  
 class Devicecheck(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -80,7 +82,9 @@ class Devicecheck(models.Model):
     pin_code = models.CharField(max_length=10)
     mobile_number = models.CharField(max_length=20)
     email = models.EmailField()   
-
+    
+    def __str__(self):
+        return self.client_name
     
     
 class Test(models.Model):
@@ -107,22 +111,40 @@ class RefDr(models.Model):
     EmailID= models.CharField(max_length=100)
     date =  models.DateField(auto_now_add=True)
     
-    
+    def __str__(self):
+        return self.DoctorName
     
 class ekon(models.Model):
     uhid = models.CharField(max_length=255)
     Mr = 'Mr'
-    Miss = 'Miss'
+    SMT  = 'SMT'
+    OTHERS = 'OTHERS'
+    ANIMAL = 'ANIMAL'
+    BABY = 'BABY'
+    MS = 'MS'
+    MRS = 'MRS'
+    DR = 'DR'
+    MASTER = 'MASTER'
     STATUS_CHOICES = [
         (Mr, 'Mr'),
-        (Miss, 'Miss'),
+        (SMT, 'SMT'),
+        (OTHERS, 'OTHERS'),
+        (ANIMAL, 'ANIMAL'),
+        (BABY, 'BABY'),
+        (MS, 'MS'),
+        (MRS, 'MRS'),
+        (DR, 'DR'),
+        (MASTER, 'MASTER')
+        
     ]
     title = models.CharField(max_length=255)
     male = 'male'
     female = 'female'
+    Others = 'Others'
     STATUS_CHOICES = [
         (male, 'male'),
         (female, 'female'),
+        (Others,'Others'),
     ]
     gender = models.CharField(max_length=255)
     patient_name = models.CharField(max_length=255)
@@ -141,6 +163,9 @@ class ekon(models.Model):
     status = models.CharField(max_length=255, choices=STATUS_CHOICES)
     accession_number = models.CharField(max_length=50)
     
+    def __str__(self):
+        return self.patient_name
+    
 
 import uuid
 
@@ -148,15 +173,19 @@ class Visit(models.Model):
     patient = models.ForeignKey(ekon, on_delete=models.CASCADE)
     patient_category = models.CharField(max_length=255)
     ref_dr =  models.CharField(max_length=255)
-    selected_test = models.ManyToManyField(Test)
+    selected_test = models.CharField(max_length=255)
     visit_id = models.CharField(max_length=100)
     date =  models.DateField(auto_now_add=True)
+    
    
 
     
     
 class patientcategory(models.Model):
     category = models.CharField(max_length = 255)
+    
+    def __str__(self):
+        return self.category
     
     
 class Scansummary(models.Model):
