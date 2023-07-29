@@ -28,7 +28,7 @@ DEBUG = True
 
 
 
-ALLOWED_HOSTS = ['http://127.0.0.1:8000', 'localhost', '127.0.0.1', '192.168.1.4',]
+ALLOWED_HOSTS = ['http://127.0.0.1:8000', 'localhost', '127.0.0.1', '192.168.1.14',]
 
 # to run the port with ip use cmd "python manage.py runserver 0.0.0.0:8000"
 

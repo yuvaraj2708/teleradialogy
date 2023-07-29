@@ -24,6 +24,12 @@ from reportlab.lib.pagesizes import A4
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.models import User
+import qrcode
+from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen import canvas
+
 # Create your views here.
 User = get_user_model()
 
@@ -282,32 +288,43 @@ def testmaster(request):
 @login_required
 @device_required
 def addvisit(request, id):
-    refdrs = RefDr.objects.all() 
+    refdrs = RefDr.objects.all()
     patient = ekon.objects.get(id=id)
     select_test = Test.objects.all()
     patientscategory = patientcategory.objects.all()
+
     if 'visit_id' not in request.session:
         request.session['visit_id'] = generate_visit_id()
+
     if request.method == 'POST':
         # Extract form data from request.POST dictionary
         visit_id = request.POST.get('visit_id')
         patient_category = request.POST.get('patient_category')
         ref_dr = request.POST.get('ref_dr')
-        selected_tests = request.POST.getlist('selected_test')
-        # Join the selected_test list using a delimiter (e.g., comma)
-        selected_test_str = ','.join(selected_tests)
+        selected_test = request.POST.getlist('selected_test')
+
         # Create a new Visit object
-        visit = Visit(visit_id=request.session['visit_id'], patient=patient, patient_category=patient_category, ref_dr=ref_dr, selected_test=selected_test_str)
-        # Save the Visit object to the database
+        visit = Visit(
+            visit_id=request.session['visit_id'],
+            patient=patient,
+            patient_category=patient_category,
+            ref_dr=ref_dr,
+            selected_test=selected_test,
+        )
         visit.save()
-        # Redirect to the page where you want to display both models
+
+        # Add selected tests to the visit
+        
+
+        # Redirect to the page where you want to display the visit summary
         return redirect('visitsummary')
+
     context = {'patient': patient,
                'refdrs': refdrs,
-               'select_test':select_test,
-               'patientscategory':patientscategory,
+               'select_test': select_test,
+               'patientscategory': patientscategory,
                }
-    
+
     return render(request, 'add-visit.html', context)
 
 
@@ -506,16 +523,13 @@ def editpatient(request, id):
 
 
 
-
-
-
 @login_required
 @device_required
+
 def downloadbarcode(request, patient_id):
     patient = ekon.objects.get(id=patient_id)
 
-    # Generate PDF with barcode and patient details
-    buffer = io.BytesIO()
+    buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=A4)
     c.setFont("Helvetica", 12)
 
@@ -526,7 +540,7 @@ def downloadbarcode(request, patient_id):
 
     # Draw patient details
     text_height = 20
-    c.drawString(center_x, center_y + 50, f" {patient.patient_name}")
+    c.drawString(center_x, center_y + 50, f"Patient Name: {patient.patient_name}")
     c.drawString(center_x, center_y + 50 - text_height, f"Age: {patient.age}")
     c.drawString(center_x, center_y + 50 - 2 * text_height, f"Gender: {patient.gender}")
 
@@ -549,6 +563,38 @@ def downloadbarcode(request, patient_id):
     buffer.seek(0)
     response = HttpResponse(buffer, content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=barcode.pdf'
+    return response
+
+
+def downloadqrcode(request, patient_id):
+    patient = ekon.objects.get(id=patient_id)
+    visit = Visit.objects.get(id=patient_id)
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
+    c.setFont("Helvetica", 12)
+
+    # Calculate the center positions
+    page_width, page_height = A4
+    center_x = page_width / 2
+    center_y = page_height / 2
+
+    # Draw patient details
+    text_height = 20
+    
+    # Generate QR code and add it to the PDF
+    qr_code_data = f"Patient Name: {patient.patient_name}\nAge: {patient.age}\nGender: {patient.gender},\nuhid: {patient.uhid},\ndob: {patient.dob},\nContactnumber: {patient.contact_number},\npatientcategory: {visit.patient_category},\nrefDr: {visit.ref_dr},\nselectedtest: {visit.selected_test},\nvisit id: {visit.visit_id}"
+    qr_code = qrcode.make(qr_code_data)
+    qr_code_buffer = BytesIO()
+    qr_code.save(qr_code_buffer, format='PNG')
+    c.drawImage(ImageReader(qr_code_buffer), center_x - 100, center_y - 100, width=200, height=200)
+
+    c.showPage()
+    c.save()
+
+    # Rewind the buffer and create an HTTP response with the PDF data
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename=qrcode.pdf'
     return response
 
 

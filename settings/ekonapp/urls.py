@@ -39,6 +39,6 @@ urlpatterns = [
     path('edit_refdr/<int:id>/',edit_refdr,name="edit_refdr"),
     path('edittest/<int:id>/',edittest,name='edittest'),
     path('downloadbarcode/<int:patient_id>/', downloadbarcode, name='downloadbarcode'),
-  
+    path('downloadqrcode/<int:patient_id>/', downloadqrcode, name='downloadqrcode'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

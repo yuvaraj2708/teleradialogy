@@ -100,12 +100,13 @@
                       
                       <div class="col-md-6">
                         <label class="form-label">Select Test</label>
-                        <select class="form-select" name="selected_test" required>
+                        <select class="form-select" name="selected_test" multiple required>
                             <option value="" selected>Please select test</option>
                             {% for selectedtest in select_test %}
-                            <option value="{{ selectedtest.name }}">{{ selectedtest.name }}</option>
+                            <option value="{{ selectedtest.name }}" data-testid="{{ selectedtest.testid }}">{{ selectedtest.name }}</option>
                             {% endfor %}
                         </select>
+                        
                     </div>
                     
                     <div class="table-responsive" id="selected-test-table" style="display: none;">
@@ -129,38 +130,39 @@
                     </div>
                     </main>
                     </html>
-                    
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    var selectedTestsData = []; // Array to store the selected test data
-
-    // Add event listener to the dropdown to display selected test details
-    $('select[name="selected_test"]').on('change', function () {
-        var selectedTest = $(this).val();
-        if (selectedTest !== '') {
-            // Fetch test details via AJAX (you need to implement this part)
-            // For demonstration purposes, I'm just updating the table with static data
-            var testData = {
-                testid: 'T001', // Replace with the actual test ID
-                name: selectedTest,
-            };
-            selectedTestsData.push(testData); // Add the selected test data to the array
-            updateTable(); // Update the table with all selected tests
-        } else {
-            // Hide the table if no test is selected
-            $('#selected-test-table').hide();
-        }
-    });
-
-    // Function to update the table with all selected test details
-    function updateTable() {
-        $('#selected-test-tbody').html('');
-        for (var i = 0; i < selectedTestsData.length; i++) {
-            var testData = selectedTestsData[i];
-            var row = '<tr><td>' + testData.testid + '</td><td>' + testData.name + '</td><td class="text-end"><div class="d-flex gap-2 justify-content-end"><button type="button" class="table-btn"><svg class="gender-icon"><use xlink:href="static/images/bootstrap-icons.svg#x-lg"></use></svg></button></div></td></tr>';
-            $('#selected-test-tbody').append(row);
-        }
-        $('#selected-test-table').show();
-    }
-</script>
+                    <script>
+                        var selectedTestsData = []; // Array to store the selected test data
+                    
+                        // Add event listener to the dropdown to display selected test details
+                        $('select[name="selected_test"]').on('change', function () {
+                            var selectedOption = $(this).find(':selected');
+                            var selectedTest = selectedOption.val();
+                            var testID = selectedOption.data('testid'); // Get the test ID from the data attribute
+                            if (selectedTest !== '') {
+                                var testData = {
+                                    testid: testID,
+                                    name: selectedTest,
+                                };
+                                selectedTestsData.push(testData); // Add the selected test data to the array
+                                updateTable(); // Update the table with all selected tests
+                            } else {
+                                // Hide the table if no test is selected
+                                $('#selected-test-table').hide();
+                            }
+                        });
+                    
+                        // Function to update the table with all selected test details
+                        function updateTable() {
+                            $('#selected-test-tbody').html('');
+                            for (var i = 0; i < selectedTestsData.length; i++) {
+                                var testData = selectedTestsData[i];
+                                var row = '<tr><td>' + testData.testid + '</td><td>' + testData.name + '</td><td class="text-end"><div class="d-flex gap-2 justify-content-end"><button type="button" class="table-btn"><svg class="gender-icon"><use xlink:href="static/images/bootstrap-icons.svg#x-lg"></use></svg></button></div></td></tr>';
+                                $('#selected-test-tbody').append(row);
+                            }
+                            $('#selected-test-table').show();
+                        }
+                    </script>
+                    
+                    
                     {% endblock %}
