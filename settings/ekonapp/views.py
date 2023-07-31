@@ -539,10 +539,10 @@ def downloadbarcode(request, patient_id):
     center_y = page_height / 2
 
     # Draw patient details
-    text_height = 20
-    c.drawString(center_x, center_y + 50, f"Patient Name: {patient.patient_name}")
-    c.drawString(center_x, center_y + 50 - text_height, f"Age: {patient.age}")
-    c.drawString(center_x, center_y + 50 - 2 * text_height, f"Gender: {patient.gender}")
+    text = f"Patient uhid: {patient.uhid}"
+    text_width = c.stringWidth(text, "Helvetica", 12)
+    text_x = center_x - (text_width / 2)
+    c.drawString(text_x, center_y + 70, text)
 
     # Add barcode image using the accession number
     barcode_data = patient.accession_number
@@ -566,6 +566,7 @@ def downloadbarcode(request, patient_id):
     return response
 
 
+
 def downloadqrcode(request, patient_id):
     patient = ekon.objects.get(id=patient_id)
     visit = Visit.objects.get(id=patient_id)
@@ -578,9 +579,12 @@ def downloadqrcode(request, patient_id):
     center_x = page_width / 2
     center_y = page_height / 2
 
-    # Draw patient details
-    text_height = 20
-    
+    # Draw patient uhid
+    uhid_text = f"Patient uhid: {patient.uhid}"
+    uhid_text_width = c.stringWidth(uhid_text, "Helvetica", 12)
+    uhid_text_x = center_x - (uhid_text_width / 2)
+    c.drawString(uhid_text_x, center_y + 100, uhid_text)
+
     # Generate QR code and add it to the PDF
     qr_code_data = f"Patient Name: {patient.patient_name}\nAge: {patient.age}\nGender: {patient.gender},\nuhid: {patient.uhid},\ndob: {patient.dob},\nContactnumber: {patient.contact_number},\npatientcategory: {visit.patient_category},\nrefDr: {visit.ref_dr},\nselectedtest: {visit.selected_test},\nvisit id: {visit.visit_id}"
     qr_code = qrcode.make(qr_code_data)
