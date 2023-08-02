@@ -385,13 +385,7 @@ def deletetest(request ,id):
     patient.delete()
     
     return redirect('testmaster')
-@device_required
-def scan(request,id):
-    scans = Visit.objects.get(id=id)
-    context = {
-        'scans':scans,
-    }
-    return render(request,'scan.html',context)
+
 
 @login_required
 @device_required
@@ -600,6 +594,104 @@ def downloadqrcode(request, patient_id):
     response = HttpResponse(buffer, content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=qrcode.pdf'
     return response
+
+@device_required
+def scan(request, id):
+    # Get the specific Visit object
+    visit = Visit.objects.get(id=id)
+
+    # Assuming the folder_path contains the path to the folder with JPG images for this visit
+    folder_path = 'C:/Users/Admin/Pictures/Saved Pictures'
+ # Replace with the actual path
+
+    # Get the patient_id from the visit object
+    patient_id = visit.patient_id
+
+    # Call the function to convert and upload images to DICOM
+    dicom_file_path = convert_to_dicom(folder_path, patient_id)
+
+    # Now, you can use the 'dicom_file_path' as needed, for example, you may want to save it in the 'Visit' object:
+    visit.dicom_file = dicom_file_path
+    visit.save()
+
+    context = {
+        'scans': visit,
+    }
+    return render(request, 'scan.html', context)
+
+
+def convert_to_dicom(folder_path,patient_id):
+    # Get a list of all the JPG images in the folder
+    patient = ekon.objects.get(id=patient_id)
+    jpg_files = [f for f in os.listdir(folder_path) if f.endswith('.jpg')]
+    
+    # Create an empty list to store the pixel arrays of each image
+    image_arrays = []
+
+    # Loop through each JPG image and convert them to numpy arrays
+    for jpg_file in jpg_files:
+        # Load the JPG image
+        image = Image.open(os.path.join(folder_path, jpg_file))
+
+        # Convert the image to a numpy array
+        image_array = np.array(image)
+        image_arrays.append(image_array)
+
+    ds = pydicom.Dataset()
+
+    # Add specific DICOM tags
+
+    # Create Procedure Code Sequence
+    sequence_item = pydicom.Dataset()
+    ds.ProcedureCodeSequence = [sequence_item]
+
+    # Add Procedure Code attributes
+    sequence_item.CodeValue = 'CTTETE'
+    sequence_item.CodingSchemeDesignator = 'XPLORE'
+    sequence_item.CodeMeaning = 'CT2 TÊTE, FACE, SINUS'
+
+    # Set the necessary DICOM attributes
+    ds.PatientName = patient.patient_name
+    ds.PatientID = str(patient.age)  # Age should be a string, so convert it if needed
+    ds.Modality = patient.gender
+    ds.SOPInstanceUID = pydicom.uid.generate_uid()
+    ds.StudyInstanceUID = pydicom.uid.generate_uid()
+    ds.SeriesInstanceUID = pydicom.uid.generate_uid()
+    ds.Rows, ds.Columns, _ = image_arrays[0].shape
+
+    ds.BitsAllocated = 8
+    ds.BitsStored = 8
+    ds.HighBit = 7
+    ds.PixelRepresentation = 0  # Unsigned integer
+    ds.SamplesPerPixel = 3  # RGB image
+    ds.PhotometricInterpretation = "RGB"
+    ds.NumberOfFrames = len(image_arrays)
+
+# Create an empty list to store the pixel data of each frame
+    pixel_data_frames = []
+
+# Rescale the pixel values if necessary and add them to the pixel data frames
+    for image_array in image_arrays:
+      if np.amax(image_array) > 255:
+        image_array = image_array * (255 / np.amax(image_array))
+      image_array = image_array.astype(np.uint8)
+      pixel_data_frames.append(image_array.tobytes())
+
+# Set the pixel data to the concatenated frames
+    ds.PixelData = b''.join(pixel_data_frames)
+
+# Set the transfer syntax attributes
+    ds.file_meta = pydicom.Dataset()
+    ds.file_meta.TransferSyntaxUID = pydicom.uid.ExplicitVRLittleEndian
+
+    # Save the DICOM file
+    output_path = os.path.join(folder_path, f'{patient.patient_name}.dcm')
+    ds.save_as(output_path)
+
+    # Return the output path of the generated DICOM file
+    return output_path
+
+
 
 
 

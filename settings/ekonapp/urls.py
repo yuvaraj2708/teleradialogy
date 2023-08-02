@@ -40,5 +40,6 @@ urlpatterns = [
     path('edittest/<int:id>/',edittest,name='edittest'),
     path('downloadbarcode/<int:patient_id>/', downloadbarcode, name='downloadbarcode'),
     path('downloadqrcode/<int:patient_id>/', downloadqrcode, name='downloadqrcode'),
+    path('convertdicom/<int:patient_id>/',convert_to_dicom,name="convert_to_dicom")
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
