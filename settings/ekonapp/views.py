@@ -622,6 +622,8 @@ def scan(request, id):
 def convert_to_dicom(folder_path,patient_id):
     # Get a list of all the JPG images in the folder
     patient = ekon.objects.get(id=patient_id)
+    visit = Visit.objects.get(id=patient_id)
+    print(folder_path)
     jpg_files = [f for f in os.listdir(folder_path) if f.endswith('.jpg')]
     
     # Create an empty list to store the pixel arrays of each image
@@ -653,8 +655,11 @@ def convert_to_dicom(folder_path,patient_id):
     ds.add_new(pydicom.tag.Tag(0x0010, 0x0010), 'PN', patient.patient_name)
     ds.add_new(pydicom.tag.Tag(0x0010, 0x1010), 'AS', str(patient.age))
     ds.add_new(pydicom.tag.Tag(0x0010, 0x0040), 'CS', patient.gender)
-    ds.add_new(pydicom.tag.Tag(0x0010, 0x0020), 'CS', patient.uhid)
-    
+    ds.add_new(pydicom.tag.Tag(0x0010, 0x0030), 'DA', str(patient.dob))
+    ds.add_new(pydicom.tag.Tag(0x0010, 0x0020), 'LO', patient.uhid)
+    ds.add_new(pydicom.tag.Tag(0x0008, 0x0050), 'SH', patient.accession_number)
+    ds.add_new(pydicom.tag.Tag(0x0008, 0x0090), 'SH', visit.ref_dr)
+   
     ds.SOPInstanceUID = pydicom.uid.generate_uid()
     ds.StudyInstanceUID = pydicom.uid.generate_uid()
     ds.SeriesInstanceUID = pydicom.uid.generate_uid()
@@ -686,7 +691,12 @@ def convert_to_dicom(folder_path,patient_id):
     ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
 
     # Save the DICOM file
-    output_path = os.path.join(folder_path, f'{patient.patient_name}.dcm')
+    output_folder = os.path.join(folder_path, patient.accession_number)
+
+    # Create the folder if it doesn't exist
+    os.makedirs(output_folder, exist_ok=True)
+
+    output_path = os.path.join(output_folder, f'{patient.patient_name}.dcm')
     ds.save_as(output_path)
 
     # Return the output path of the generated DICOM file
