@@ -602,8 +602,7 @@ def scan(request, id):
 
     # Assuming the folder_path contains the path to the folder with JPG images for this visit
     folder_path = 'C:/Users/Admin/Pictures/Saved Pictures'
- # Replace with the actual path
-
+ 
     # Get the patient_id from the visit object
     patient_id = visit.patient_id
 
@@ -643,17 +642,19 @@ def convert_to_dicom(folder_path,patient_id):
 
     # Create Procedure Code Sequence
     sequence_item = pydicom.Dataset()
-    ds.ProcedureCodeSequence = [sequence_item]
+    # ds.ProcedureCodeSequence = [sequence_item]
 
-    # Add Procedure Code attributes
-    sequence_item.CodeValue = 'CTTETE'
-    sequence_item.CodingSchemeDesignator = 'XPLORE'
-    sequence_item.CodeMeaning = 'CT2 TÊTE, FACE, SINUS'
+    # # Add Procedure Code attributes
+    # sequence_item.CodeValue = 'CTTETE'
+    # sequence_item.CodingSchemeDesignator = 'XPLORE'
+    # sequence_item.CodeMeaning = 'CT2 TÊTE, FACE, SINUS'
 
     # Set the necessary DICOM attributes
-    ds.PatientName = patient.patient_name
-    ds.PatientID = str(patient.age)  # Age should be a string, so convert it if needed
-    ds.Modality = patient.gender
+    ds.add_new(pydicom.tag.Tag(0x0010, 0x0010), 'PN', patient.patient_name)
+    ds.add_new(pydicom.tag.Tag(0x0010, 0x1010), 'AS', str(patient.age))
+    ds.add_new(pydicom.tag.Tag(0x0010, 0x0040), 'CS', patient.gender)
+    ds.add_new(pydicom.tag.Tag(0x0010, 0x0020), 'CS', patient.uhid)
+    
     ds.SOPInstanceUID = pydicom.uid.generate_uid()
     ds.StudyInstanceUID = pydicom.uid.generate_uid()
     ds.SeriesInstanceUID = pydicom.uid.generate_uid()
@@ -682,7 +683,7 @@ def convert_to_dicom(folder_path,patient_id):
 
 # Set the transfer syntax attributes
     ds.file_meta = pydicom.Dataset()
-    ds.file_meta.TransferSyntaxUID = pydicom.uid.ExplicitVRLittleEndian
+    ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
 
     # Save the DICOM file
     output_path = os.path.join(folder_path, f'{patient.patient_name}.dcm')
