@@ -621,6 +621,7 @@ def scan(request, id):
 
 def convert_to_dicom(folder_path,patient_id):
     # Get a list of all the JPG images in the folder
+    
     patient = ekon.objects.get(id=patient_id)
     visit = Visit.objects.get(id=patient_id)
     print(folder_path)
